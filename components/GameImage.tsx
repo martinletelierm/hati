@@ -3,15 +3,15 @@
 import { useState } from 'react'
 
 const FALLBACK_COLORS: Record<string, string> = {
-  'full':       'bg-gradient-to-br from-forest to-forest-mid',
-  'box':        'bg-gradient-to-br from-forest-light to-forest',
-  'tower':      'bg-gradient-to-br from-purple to-forest',
-  'action':     'bg-gradient-to-br from-orange to-magenta',
-  'components': 'bg-gradient-to-br from-gold to-orange',
+  'DSCF9550': 'bg-gradient-to-br from-forest to-forest-mid',
+  'DSCF9379': 'bg-gradient-to-br from-forest-light to-forest',
+  'DSCF9497': 'bg-gradient-to-br from-purple to-forest',
+  'DSCF9538': 'bg-gradient-to-br from-orange to-magenta',
+  'DSCF9477': 'bg-gradient-to-br from-gold to-orange',
 }
 
 const FALLBACK_EMOJI: Record<string, string> = {
-  'full': '🎲', 'box': '📦', 'tower': '🐘', 'action': '✨', 'components': '🌿',
+  'DSCF9550': '🎲', 'DSCF9379': '📦', 'DSCF9497': '🐘', 'DSCF9538': '✨', 'DSCF9477': '🌿',
 }
 
 interface Props {

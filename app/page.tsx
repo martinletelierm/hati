@@ -7,7 +7,7 @@ export default function Home() {
 
       {/* HEADER */}
       <header className="bg-forest text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: "url('/images/components.jpg')" }} />
+        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: "url('/images/DSCF9477.png')" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-forest/80 via-forest/60 to-forest" />
 
         <div className="relative max-w-3xl mx-auto px-6 py-10 text-center">
@@ -46,21 +46,21 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             <div className="col-span-2 aspect-square">
-              <GameImage src="/images/full.jpg" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
+              <GameImage src="/images/DSCF9550.png" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex-1">
-                <GameImage src="/images/box.jpg" alt="Caja HATI" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
+                <GameImage src="/images/DSCF9379.png" alt="Caja HATI" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
               </div>
               <div className="flex-1">
-                <GameImage src="/images/tower.jpg" alt="Torre" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
+                <GameImage src="/images/DSCF9497.png" alt="Torre" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
               </div>
             </div>
             <div className="aspect-[4/3]">
-              <GameImage src="/images/action.jpg" alt="En acción" className="w-full h-full object-cover rounded-2xl" />
+              <GameImage src="/images/DSCF9538.png" alt="En acción" className="w-full h-full object-cover rounded-2xl" />
             </div>
             <div className="col-span-2 aspect-[16/7]">
-              <GameImage src="/images/components.jpg" alt="Componentes" className="w-full h-full object-cover rounded-2xl" />
+              <GameImage src="/images/DSCF9477.png" alt="Componentes" className="w-full h-full object-cover rounded-2xl" />
             </div>
           </div>
 
