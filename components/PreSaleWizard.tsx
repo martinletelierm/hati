@@ -14,8 +14,10 @@ export type WizardData = {
   telefono: string
   rut: string
   direccion: string
-  ciudad: string
+  departamento: string
   comuna: string
+  ciudad: string
+  region: string
 }
 
 export default function PreSaleWizard() {
@@ -23,7 +25,7 @@ export default function PreSaleWizard() {
   const [data, setData] = useState<WizardData>({
     cantidad: 1, numeroPedido: '',
     nombre: '', email: '', telefono: '', rut: '',
-    direccion: '', ciudad: '', comuna: '',
+    direccion: '', departamento: '', comuna: '', ciudad: '', region: '',
   })
   const [submitted, setSubmitted] = useState(false)
 
@@ -43,20 +45,17 @@ export default function PreSaleWizard() {
 
   if (submitted) return <StepConfirmation data={data} />
 
-  const TOTAL_STEPS = 3
-
   return (
     <div>
-      {/* Minimal progress */}
       <div className="flex items-center gap-3 mb-8 px-1">
         <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
           <div
             className="h-full bg-forest rounded-full transition-all duration-500"
-            style={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
+            style={{ width: `${((step + 1) / 3) * 100}%` }}
           />
         </div>
         <span className="text-xs font-medium text-gray-400 tabular-nums flex-shrink-0">
-          {step + 1} / {TOTAL_STEPS}
+          {step + 1} / 3
         </span>
       </div>
 

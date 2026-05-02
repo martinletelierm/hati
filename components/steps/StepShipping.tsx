@@ -17,11 +17,12 @@ export default function StepShipping({
 
   const validate = () => {
     const e: Record<string, string> = {}
-    if (data.nombre.trim().length < 2)   e.nombre = 'Ingresa tu nombre'
+    if (data.nombre.trim().length < 2)              e.nombre    = 'Ingresa tu nombre'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Email inválido'
-    if (data.telefono.replace(/\D/g,'').length < 8) e.telefono = 'Teléfono inválido'
-    if (data.rut.trim().length < 5)      e.rut = 'RUT inválido'
-    if (data.direccion.trim().length < 5) e.direccion = 'Selecciona una dirección válida'
+    if (data.telefono.replace(/\D/g, '').length < 8) e.telefono = 'Teléfono inválido'
+    if (data.rut.trim().length < 5)                 e.rut       = 'RUT inválido'
+    if (data.direccion.trim().length < 5)            e.direccion = 'Selecciona una dirección válida'
+    if (!data.region)                                e.region    = 'Completa la dirección para auto-detectar la región'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -35,7 +36,7 @@ export default function StepShipping({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 3</p>
         <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
@@ -44,14 +45,15 @@ export default function StepShipping({
         <p className="text-gray-400 mt-1 text-sm">Te contactamos por WhatsApp para coordinar</p>
       </div>
 
-      <div className="space-y-4">
+      {/* Personal */}
+      <div className="space-y-3">
         <Field label="Nombre completo" error={errors.nombre}>
           <input
             autoFocus
             value={data.nombre}
             onChange={e => update({ nombre: e.target.value })}
             placeholder="Tu nombre completo"
-            className={inputCls(errors.nombre)}
+            className={cls(errors.nombre)}
           />
         </Field>
 
@@ -62,7 +64,7 @@ export default function StepShipping({
               value={data.email}
               onChange={e => update({ email: e.target.value })}
               placeholder="tu@email.com"
-              className={inputCls(errors.email)}
+              className={cls(errors.email)}
             />
           </Field>
           <Field label="Teléfono" error={errors.telefono}>
@@ -71,7 +73,7 @@ export default function StepShipping({
               value={data.telefono}
               onChange={e => update({ telefono: e.target.value })}
               placeholder="+56 9 ..."
-              className={inputCls(errors.telefono)}
+              className={cls(errors.telefono)}
             />
           </Field>
         </div>
@@ -81,34 +83,42 @@ export default function StepShipping({
             value={data.rut}
             onChange={e => update({ rut: e.target.value })}
             placeholder="12.345.678-9"
-            className={inputCls(errors.rut)}
+            className={cls(errors.rut)}
           />
         </Field>
+      </div>
 
-        <Field label="Dirección" error={errors.direccion}>
-          <AddressAutocomplete
-            value={data.direccion}
-            onChange={(addr, ciudad, comuna) => update({ direccion: addr, ciudad, comuna })}
-            error={errors.direccion}
-          />
-        </Field>
+      {/* Divider */}
+      <div className="border-t border-gray-100 pt-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Dirección de envío</p>
 
-        {data.ciudad || data.comuna ? (
-          <div className="flex gap-3">
-            {data.ciudad && (
-              <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3">
-                <p className="text-xs text-gray-400 mb-0.5">Ciudad</p>
-                <p className="text-sm font-medium text-forest">{data.ciudad}</p>
-              </div>
-            )}
-            {data.comuna && (
-              <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3">
-                <p className="text-xs text-gray-400 mb-0.5">Comuna</p>
-                <p className="text-sm font-medium text-forest">{data.comuna}</p>
-              </div>
-            )}
+        <div className="space-y-3">
+          <Field label="Dirección" error={errors.direccion}>
+            <AddressAutocomplete
+              value={data.direccion}
+              onChange={({ direccion, comuna, ciudad, region }) =>
+                update({ direccion, comuna, ciudad, region })
+              }
+              error={errors.direccion}
+            />
+          </Field>
+
+          <Field label="Depto / Casa / Oficina" hint="Opcional">
+            <input
+              value={data.departamento}
+              onChange={e => update({ departamento: e.target.value })}
+              placeholder="Ej: Depto 301, Casa B, Of. 5"
+              className={cls()}
+            />
+          </Field>
+
+          {/* Auto-filled fields */}
+          <div className="grid grid-cols-3 gap-3">
+            <AutoField label="Comuna" value={data.comuna} />
+            <AutoField label="Ciudad" value={data.ciudad} />
+            <AutoField label="Región" value={data.region} error={errors.region} />
           </div>
-        ) : null}
+        </div>
       </div>
 
       <p className="text-xs text-gray-400 text-center">
@@ -135,17 +145,38 @@ export default function StepShipping({
   )
 }
 
-const inputCls = (err?: string) =>
+const cls = (err?: string) =>
   `w-full py-4 px-5 rounded-2xl border-2 outline-none transition-colors text-base ${
     err ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-forest bg-white'
   }`
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({
+  label, hint, error, children,
+}: { label: string; hint?: string; error?: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-gray-500">{label}</label>
+      <div className="flex items-baseline gap-2">
+        <label className="text-sm font-medium text-gray-500">{label}</label>
+        {hint && <span className="text-xs text-gray-300">{hint}</span>}
+      </div>
       {children}
       {error && <p className="text-red-500 text-xs">{error}</p>}
+    </div>
+  )
+}
+
+function AutoField({ label, value, error }: { label: string; value: string; error?: string }) {
+  return (
+    <div>
+      <p className="text-xs text-gray-400 mb-1.5">{label}</p>
+      <div className={`py-3 px-4 rounded-xl border text-sm min-h-[48px] ${
+        value
+          ? 'border-gray-200 bg-gray-50 text-forest font-medium'
+          : 'border-dashed border-gray-200 text-gray-300'
+      }`}>
+        {value || 'Auto'}
+      </div>
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   )
 }

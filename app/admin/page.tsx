@@ -10,13 +10,13 @@ type Order = {
   telefono: string
   rut: string
   direccion: string
-  ciudad: string
+  departamento: string | null
   comuna: string
+  ciudad: string
+  region: string
   cantidad: number
   precio_total: number
   status: string
-  ubicacion_lat: number | null
-  ubicacion_lng: number | null
   created_at: string
 }
 
@@ -29,12 +29,12 @@ const COLUMNS: { key: keyof Order; label: string; format?: (v: any) => string }[
   { key: 'telefono',      label: 'Teléfono' },
   { key: 'rut',           label: 'RUT' },
   { key: 'direccion',     label: 'Dirección' },
-  { key: 'ciudad',        label: 'Ciudad' },
+  { key: 'departamento',  label: 'Depto/Casa', format: (v) => v ?? '—' },
   { key: 'comuna',        label: 'Comuna' },
+  { key: 'ciudad',        label: 'Ciudad' },
+  { key: 'region',        label: 'Región' },
   { key: 'cantidad',      label: 'Cantidad' },
   { key: 'precio_total',  label: 'Precio',        format: (v) => `$${Number(v).toLocaleString('es-CL')}` },
-  { key: 'ubicacion_lat', label: 'Lat',           format: (v) => v ?? '-' },
-  { key: 'ubicacion_lng', label: 'Lng',           format: (v) => v ?? '-' },
 ]
 
 const STATUS_COLORS: Record<string, string> = {

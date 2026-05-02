@@ -8,29 +8,22 @@ const PRICE_PER_UNIT = 27990
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const {
-    cantidad = 1, numeroPedido, nombre, email, telefono,
-    rut, direccion, ciudad, comuna, ubicacion,
+    cantidad = 1, numeroPedido, nombre, email, telefono, rut,
+    direccion, departamento, comuna, ciudad, region,
   } = body
 
   if (!numeroPedido || !nombre || !email || !rut || !direccion) {
     return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
   }
 
-  const precioTotal = Number(cantidad) * PRICE_PER_UNIT
-
   const { error } = await getSupabase().from('preorders').insert({
     numero_pedido: numeroPedido,
-    nombre,
-    email,
-    telefono,
-    rut,
+    nombre, email, telefono, rut,
     direccion,
-    ciudad,
-    comuna,
+    departamento: departamento || null,
+    comuna, ciudad, region,
     cantidad: Number(cantidad),
-    precio_total: precioTotal,
-    ubicacion_lat: ubicacion?.lat ?? null,
-    ubicacion_lng: ubicacion?.lng ?? null,
+    precio_total: Number(cantidad) * PRICE_PER_UNIT,
   })
 
   if (error) {
@@ -38,5 +31,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Error guardando la pre-orden' }, { status: 500 })
   }
 
-  return NextResponse.json({ success: true, numeroPedido, precioTotal }, { status: 201 })
+  return NextResponse.json({ success: true }, { status: 201 })
 }
