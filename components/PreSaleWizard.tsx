@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import StepTransfer from './steps/StepTransfer'
 import StepOrderNumber from './steps/StepOrderNumber'
 import StepShipping from './steps/StepShipping'
 import StepConfirmation from './steps/StepConfirmation'
 
 export type WizardData = {
+  cantidad: number
   numeroPedido: string
   nombre: string
   email: string
@@ -23,6 +24,7 @@ const STEPS = ['Transferencia', 'Comprobante', 'Envío'] as const
 export default function PreSaleWizard() {
   const [step, setStep] = useState(0)
   const [data, setData] = useState<WizardData>({
+    cantidad: 1,
     numeroPedido: '',
     nombre: '',
     email: '',
@@ -42,22 +44,16 @@ export default function PreSaleWizard() {
   const back = () => setStep((s) => Math.max(s - 1, 0))
 
   const onComplete = async () => {
-    try {
-      const res = await fetch('/api/presale', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (!res.ok) throw new Error('Error')
-      setSubmitted(true)
-    } catch {
-      alert('Error al enviar. Intenta nuevamente.')
-    }
+    const res = await fetch('/api/presale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!res.ok) throw new Error('Error')
+    setSubmitted(true)
   }
 
-  if (submitted) {
-    return <StepConfirmation data={data} />
-  }
+  if (submitted) return <StepConfirmation data={data} />
 
   return (
     <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
@@ -78,20 +74,12 @@ export default function PreSaleWizard() {
                 >
                   {i < step ? '✓' : i + 1}
                 </div>
-                <span
-                  className={`mt-1 text-xs font-medium hidden sm:block ${
-                    i <= step ? 'text-forest' : 'text-gray-400'
-                  }`}
-                >
+                <span className={`mt-1 text-xs font-medium hidden sm:block ${i <= step ? 'text-forest' : 'text-gray-400'}`}>
                   {label}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
-                <div
-                  className={`flex-1 h-0.5 mx-1 ${
-                    i < step ? 'bg-forest' : 'bg-gray-200'
-                  }`}
-                />
+                <div className={`flex-1 h-0.5 mx-1 ${i < step ? 'bg-forest' : 'bg-gray-200'}`} />
               )}
             </div>
           ))}
@@ -100,23 +88,9 @@ export default function PreSaleWizard() {
 
       {/* Step content */}
       <div className="p-6 md:p-8">
-        {step === 0 && <StepTransfer onNext={next} />}
-        {step === 1 && (
-          <StepOrderNumber
-            data={data}
-            update={update}
-            onNext={next}
-            onBack={back}
-          />
-        )}
-        {step === 2 && (
-          <StepShipping
-            data={data}
-            update={update}
-            onSubmit={onComplete}
-            onBack={back}
-          />
-        )}
+        {step === 0 && <StepTransfer data={data} update={update} onNext={next} />}
+        {step === 1 && <StepOrderNumber data={data} update={update} onNext={next} onBack={back} />}
+        {step === 2 && <StepShipping data={data} update={update} onSubmit={onComplete} onBack={back} />}
       </div>
     </div>
   )

@@ -1,18 +1,52 @@
 'use client'
 
 import { useState } from 'react'
+import type { WizardData } from '../PreSaleWizard'
+
+const PRICE_PER_UNIT = 27990
 
 const BANK_INFO = {
-  banco: 'Banco Estado',
-  tipoCuenta: 'Cuenta Vista',
-  numeroCuenta: '12345678',
-  rut: '12.345.678-9',
-  nombre: 'HATI SpA',
-  email: 'pagos@hati.cl',
-  monto: '27990',
+  nombre:       'Clara Valenzuela',
+  rut:          '20.428.300-1',
+  banco:        'Banco Santander',
+  tipoCuenta:   'Cuenta Corriente',
+  numeroCuenta: '000082103694',
+  email:        'clara.valenzuela@uc.cl',
 }
 
-export default function StepTransfer({ onNext }: { onNext: () => void }) {
+function copyText(text: string) {
+  try {
+    navigator.clipboard.writeText(text)
+  } catch {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand('copy')
+    document.body.removeChild(ta)
+  }
+}
+
+export default function StepTransfer({
+  data,
+  update,
+  onNext,
+}: {
+  data: WizardData
+  update: (partial: Partial<WizardData>) => void
+  onNext: () => void
+}) {
+  const total = data.cantidad * PRICE_PER_UNIT
+
+  const allDataText = [
+    BANK_INFO.nombre,
+    BANK_INFO.rut,
+    BANK_INFO.banco,
+    BANK_INFO.tipoCuenta,
+    BANK_INFO.numeroCuenta,
+    BANK_INFO.email,
+  ].join('\n')
+
   return (
     <div className="space-y-6 animate-fade-up">
       <div className="text-center">
@@ -22,37 +56,68 @@ export default function StepTransfer({ onNext }: { onNext: () => void }) {
         <h2 className="text-2xl md:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Realiza la transferencia
         </h2>
-        <p className="text-gray-500 mt-2 text-sm">
-          Toca cualquier dato para copiarlo
-        </p>
+        <p className="text-gray-500 mt-2 text-sm">Toca cualquier dato para copiarlo</p>
       </div>
 
-      {/* Total destacado */}
+      {/* Cantidad */}
+      <div className="bg-cream rounded-2xl p-5">
+        <label className="block text-sm font-semibold text-forest mb-3">
+          ¿Cuántos juegos quieres?
+        </label>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => update({ cantidad: Math.max(1, data.cantidad - 1) })}
+            className="w-11 h-11 rounded-xl border-2 border-gray-200 text-xl font-bold text-forest hover:border-forest hover:bg-forest hover:text-white transition-colors flex items-center justify-center"
+          >
+            −
+          </button>
+          <span className="text-3xl font-bold text-forest w-10 text-center" style={{ fontFamily: 'Georgia, serif' }}>
+            {data.cantidad}
+          </span>
+          <button
+            onClick={() => update({ cantidad: data.cantidad + 1 })}
+            className="w-11 h-11 rounded-xl border-2 border-gray-200 text-xl font-bold text-forest hover:border-forest hover:bg-forest hover:text-white transition-colors flex items-center justify-center"
+          >
+            +
+          </button>
+          <span className="text-sm text-gray-500 ml-1">
+            × ${PRICE_PER_UNIT.toLocaleString('es-CL')} c/u
+          </span>
+        </div>
+      </div>
+
+      {/* Total */}
       <div className="bg-gradient-to-br from-forest to-forest-mid text-white rounded-2xl p-6 text-center">
         <div className="text-sm uppercase tracking-widest text-white/60 mb-1">Total a transferir</div>
         <CopyValue
-          value={BANK_INFO.monto}
-          display={`$${Number(BANK_INFO.monto).toLocaleString('es-CL')}`}
+          value={String(total)}
+          display={`$${total.toLocaleString('es-CL')}`}
           variant="hero"
         />
+        {data.cantidad > 1 && (
+          <p className="text-white/50 text-xs mt-2">{data.cantidad} juegos × ${PRICE_PER_UNIT.toLocaleString('es-CL')}</p>
+        )}
       </div>
 
-      {/* Datos de la cuenta */}
-      <div className="bg-cream rounded-2xl p-4 space-y-2">
-        <CopyRow label="Banco" value={BANK_INFO.banco} />
-        <CopyRow label="Tipo de cuenta" value={BANK_INFO.tipoCuenta} />
-        <CopyRow label="N° de cuenta" value={BANK_INFO.numeroCuenta} highlight />
-        <CopyRow label="RUT" value={BANK_INFO.rut} />
-        <CopyRow label="Nombre" value={BANK_INFO.nombre} />
-        <CopyRow label="Email" value={BANK_INFO.email} />
+      {/* Datos bancarios */}
+      <div className="bg-cream rounded-2xl p-4 space-y-1">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm font-semibold text-forest">Datos de transferencia</span>
+          <CopyAllButton text={allDataText} />
+        </div>
+        <CopyRow label="Nombre"     value={BANK_INFO.nombre} />
+        <CopyRow label="RUT"        value={BANK_INFO.rut} />
+        <CopyRow label="Banco"      value={BANK_INFO.banco} />
+        <CopyRow label="Tipo"       value={BANK_INFO.tipoCuenta} />
+        <CopyRow label="N° cuenta"  value={BANK_INFO.numeroCuenta} highlight />
+        <CopyRow label="Email"      value={BANK_INFO.email} />
       </div>
 
-      {/* Aviso importante */}
+      {/* Aviso */}
       <div className="bg-gold/10 border-l-4 border-gold rounded-r-2xl p-4">
         <p className="text-sm text-forest">
-          <strong>Importante:</strong> al hacer la transferencia, en el comentario o
-          detalle escribe <strong>"HATI"</strong> y guarda el comprobante o número de
-          operación — lo necesitarás en el siguiente paso.
+          <strong>Importante:</strong> en el comentario de la transferencia escribe{' '}
+          <strong>"HATI"</strong> y guarda el número de operación — lo necesitarás en el siguiente paso.
         </p>
       </div>
 
@@ -70,55 +135,50 @@ export default function StepTransfer({ onNext }: { onNext: () => void }) {
   )
 }
 
-function CopyRow({
-  label,
-  value,
-  highlight,
-}: {
-  label: string
-  value: string
-  highlight?: boolean
-}) {
+function CopyAllButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+  const handle = () => {
+    copyText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
   return (
-    <div className="flex items-center justify-between gap-3 py-2">
-      <span className="text-sm text-gray-500 flex-shrink-0">{label}</span>
+    <button
+      onClick={handle}
+      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+        copied ? 'bg-forest text-white' : 'bg-white text-forest hover:bg-forest hover:text-white border border-gray-200'
+      }`}
+    >
+      {copied ? '✓ ¡Copiado!' : '📋 Copiar todo'}
+    </button>
+  )
+}
+
+function CopyRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-gray-100 last:border-0">
+      <span className="text-sm text-gray-400 flex-shrink-0 w-24">{label}</span>
       <CopyValue value={value} display={value} highlight={highlight} />
     </div>
   )
 }
 
 function CopyValue({
-  value,
-  display,
-  highlight,
-  variant,
+  value, display, highlight, variant,
 }: {
-  value: string
-  display: string
-  highlight?: boolean
-  variant?: 'hero'
+  value: string; display: string; highlight?: boolean; variant?: 'hero'
 }) {
   const [copied, setCopied] = useState(false)
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(value)
-    } catch {
-      const ta = document.createElement('textarea')
-      ta.value = value
-      document.body.appendChild(ta)
-      ta.select()
-      document.execCommand('copy')
-      document.body.removeChild(ta)
-    }
+  const copy = () => {
+    copyText(value)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
 
   if (variant === 'hero') {
     return (
-      <button onClick={copy} className="group block w-full mt-1">
-        <div className="text-5xl md:text-6xl font-bold animate-copied" style={{ fontFamily: 'Georgia, serif' }}>
+      <button onClick={copy} className="block w-full mt-1">
+        <div className="text-5xl md:text-6xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
           {display}
         </div>
         <div className="text-xs text-white/60 mt-2 flex items-center justify-center gap-1.5">
@@ -131,7 +191,7 @@ function CopyValue({
   return (
     <button
       onClick={copy}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors min-w-0 ${
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors min-w-0 flex-1 justify-end ${
         copied
           ? 'bg-forest text-white'
           : highlight
@@ -140,9 +200,7 @@ function CopyValue({
       }`}
     >
       <span className="font-mono text-sm md:text-base truncate">{display}</span>
-      <span className="text-xs flex-shrink-0">
-        {copied ? '✓' : '📋'}
-      </span>
+      <span className="text-xs flex-shrink-0">{copied ? '✓' : '📋'}</span>
     </button>
   )
 }
