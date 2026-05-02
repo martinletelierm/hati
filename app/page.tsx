@@ -3,95 +3,66 @@ import GameImage from '@/components/GameImage'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-screen" style={{ background: '#F7F6F2' }}>
 
       {/* HEADER */}
-      <header className="bg-forest text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: "url('/images/DSCF9477.png')" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-forest/80 via-forest/60 to-forest" />
-
-        <div className="relative max-w-3xl mx-auto px-6 py-10 text-center">
-          <h1 className="text-6xl md:text-7xl font-bold tracking-tight mb-3" style={{ fontFamily: 'Georgia, serif' }}>
-            hati
-          </h1>
-          <p className="text-cream-dark text-lg md:text-xl">
-            ¡Gracias por sumarte a la pre-venta!
-          </p>
-          <p className="text-white/60 text-sm mt-2">
-            Completa tu compra en 3 simples pasos · 2 minutos
-          </p>
+      <header className="bg-forest text-white">
+        <div className="max-w-2xl mx-auto px-6 py-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>hati</h1>
+          <span className="text-white/50 text-sm">Pre-venta</span>
         </div>
-
-        <svg className="block w-full -mb-1" viewBox="0 0 1200 60" preserveAspectRatio="none">
-          <path d="M0,60 L0,30 Q300,0 600,30 T1200,30 L1200,60 Z" fill="#F8F4EE" />
-        </svg>
       </header>
 
-      {/* WIZARD */}
-      <section className="px-4 py-8 md:py-12">
-        <div className="max-w-2xl mx-auto">
-          <PreSaleWizard />
+      {/* HERO IMAGE */}
+      <div className="max-w-2xl mx-auto px-6">
+        <div className="h-52 md:h-72 rounded-b-3xl overflow-hidden -mt-1">
+          <GameImage
+            src="/images/DSCF9477.png"
+            alt="HATI juego de mesa"
+            className="w-full h-full object-cover"
+          />
         </div>
+      </div>
+
+      {/* WIZARD */}
+      <section className="max-w-2xl mx-auto px-6 py-10">
+        <PreSaleWizard />
       </section>
 
-      {/* GAME PREVIEW */}
-      <section className="px-4 py-12 bg-forest text-white">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-2" style={{ fontFamily: 'Georgia, serif' }}>
-            Lo que viene a tu casa
-          </h2>
-          <p className="text-center text-white/70 mb-10">
-            Un juego de equilibrio para 2-6 jugadores · +5 años · 45 minutos
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            <div className="col-span-2 aspect-square">
-              <GameImage src="/images/DSCF9550.png" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <div className="flex-1">
-                <GameImage src="/images/DSCF9379.png" alt="Caja HATI" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
-              </div>
-              <div className="flex-1">
-                <GameImage src="/images/DSCF9497.png" alt="Torre" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
-              </div>
-            </div>
-            <div className="aspect-[4/3]">
-              <GameImage src="/images/DSCF9538.png" alt="En acción" className="w-full h-full object-cover rounded-2xl" />
-            </div>
-            <div className="col-span-2 aspect-[16/7]">
-              <GameImage src="/images/DSCF9477.png" alt="Componentes" className="w-full h-full object-cover rounded-2xl" />
-            </div>
+      {/* GAME GALLERY */}
+      <section className="max-w-5xl mx-auto px-6 pb-16">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5 text-center">
+          Lo que viene a tu casa
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="col-span-2 aspect-[4/3] row-span-2">
+            <GameImage src="/images/DSCF9550.png" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
           </div>
-
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <Stat icon="🌿" value="2–6" label="jugadores" color="bg-forest-light" />
-            <Stat icon="🎯" value="+5" label="años" color="bg-orange" />
-            <Stat icon="⏱️" value="45" label="minutos" color="bg-magenta" />
-            <Stat icon="🐘" value="6" label="animales" color="bg-purple" />
+          <GameImage src="/images/DSCF9379.png" alt="Caja" className="w-full aspect-square object-cover rounded-2xl" />
+          <GameImage src="/images/DSCF9497.png" alt="Torre" className="w-full aspect-square object-cover rounded-2xl" />
+          <GameImage src="/images/DSCF9538.png" alt="Acción" className="w-full aspect-square object-cover rounded-2xl" />
+          <div className="bg-forest rounded-2xl aspect-square flex flex-col items-center justify-center text-white p-4 text-center">
+            <span className="text-3xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>2–6</span>
+            <span className="text-xs text-white/60 mt-1">jugadores</span>
           </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+          {[['45', 'minutos'], ['+5', 'años'], ['6', 'animales']].map(([val, label]) => (
+            <div key={label} className="bg-white rounded-xl py-4 border border-gray-100">
+              <div className="text-xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>{val}</div>
+              <div className="text-xs text-gray-400 mt-0.5">{label}</div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-forest text-white/70 py-8 px-6 border-t border-white/10">
-        <div className="max-w-4xl mx-auto text-center text-sm space-y-2">
-          <p className="text-white text-xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>hati</p>
-          <p>Diseñado por Claudia Valenzuela Lowey &amp; Matías Castillo Bustos</p>
-          <p className="text-white/40 text-xs">© 2026 HATI · SJS Editorial</p>
-        </div>
+      <footer className="border-t border-gray-200 py-8 px-6 text-center">
+        <p className="text-sm font-bold text-forest mb-1" style={{ fontFamily: 'Georgia, serif' }}>hati</p>
+        <p className="text-xs text-gray-400">Claudia Valenzuela Lowey &amp; Matías Castillo Bustos · SJS Editorial</p>
       </footer>
 
     </main>
-  )
-}
-
-function Stat({ icon, value, label, color }: { icon: string; value: string; label: string; color: string }) {
-  return (
-    <div className={`${color} rounded-2xl p-4`}>
-      <div className="text-3xl mb-1">{icon}</div>
-      <div className="text-2xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>{value}</div>
-      <div className="text-xs uppercase tracking-wider opacity-90">{label}</div>
-    </div>
   )
 }

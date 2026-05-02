@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import type { WizardData } from '../PreSaleWizard'
 
-const PRICE_PER_UNIT = 27990
+const PRICE = 27990
 
-const BANK_INFO = {
+const BANK = {
   nombre:       'Clara Valenzuela',
   rut:          '20.428.300-1',
   banco:        'Banco Santander',
@@ -14,193 +14,137 @@ const BANK_INFO = {
   email:        'clara.valenzuela@uc.cl',
 }
 
-function copyText(text: string) {
-  try {
-    navigator.clipboard.writeText(text)
-  } catch {
-    const ta = document.createElement('textarea')
-    ta.value = text
-    document.body.appendChild(ta)
-    ta.select()
-    document.execCommand('copy')
-    document.body.removeChild(ta)
+function copy(text: string) {
+  try { navigator.clipboard.writeText(text) } catch {
+    const t = document.createElement('textarea')
+    t.value = text; document.body.appendChild(t); t.select()
+    document.execCommand('copy'); document.body.removeChild(t)
   }
 }
 
 export default function StepTransfer({
-  data,
-  update,
-  onNext,
-}: {
-  data: WizardData
-  update: (partial: Partial<WizardData>) => void
-  onNext: () => void
-}) {
-  const total = data.cantidad * PRICE_PER_UNIT
-
-  const allDataText = [
-    BANK_INFO.nombre,
-    BANK_INFO.rut,
-    BANK_INFO.banco,
-    BANK_INFO.tipoCuenta,
-    BANK_INFO.numeroCuenta,
-    BANK_INFO.email,
-  ].join('\n')
+  data, update, onNext,
+}: { data: WizardData; update: (p: Partial<WizardData>) => void; onNext: () => void }) {
+  const total = data.cantidad * PRICE
+  const allData = Object.values(BANK).join('\n')
 
   return (
-    <div className="space-y-6 animate-fade-up">
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-orange/10 text-orange rounded-2xl mb-3 text-2xl">
-          💸
-        </div>
-        <h2 className="text-2xl md:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
-          Realiza la transferencia
+    <div className="space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 1</p>
+        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+          Transfiere el monto
         </h2>
-        <p className="text-gray-500 mt-2 text-sm">Toca cualquier dato para copiarlo</p>
+        <p className="text-gray-400 mt-1 text-sm">Usa tu app de banco — toca para copiar cada dato</p>
       </div>
 
-      {/* Cantidad */}
-      <div className="bg-cream rounded-2xl p-5">
-        <label className="block text-sm font-semibold text-forest mb-3">
-          ¿Cuántos juegos quieres?
-        </label>
-        <div className="flex items-center gap-4">
+      {/* Quantity */}
+      <div>
+        <p className="text-sm font-medium text-gray-500 mb-3">¿Cuántos juegos?</p>
+        <div className="inline-flex items-center gap-5 bg-white border border-gray-200 rounded-2xl px-5 py-3">
           <button
             onClick={() => update({ cantidad: Math.max(1, data.cantidad - 1) })}
-            className="w-11 h-11 rounded-xl border-2 border-gray-200 text-xl font-bold text-forest hover:border-forest hover:bg-forest hover:text-white transition-colors flex items-center justify-center"
-          >
-            −
-          </button>
-          <span className="text-3xl font-bold text-forest w-10 text-center" style={{ fontFamily: 'Georgia, serif' }}>
-            {data.cantidad}
-          </span>
+            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-forest hover:text-white text-forest font-bold text-lg transition-colors flex items-center justify-center"
+          >−</button>
+          <span className="text-2xl font-bold w-6 text-center tabular-nums">{data.cantidad}</span>
           <button
             onClick={() => update({ cantidad: data.cantidad + 1 })}
-            className="w-11 h-11 rounded-xl border-2 border-gray-200 text-xl font-bold text-forest hover:border-forest hover:bg-forest hover:text-white transition-colors flex items-center justify-center"
-          >
-            +
-          </button>
-          <span className="text-sm text-gray-500 ml-1">
-            × ${PRICE_PER_UNIT.toLocaleString('es-CL')} c/u
+            className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-forest hover:text-white text-forest font-bold text-lg transition-colors flex items-center justify-center"
+          >+</button>
+          <span className="text-sm text-gray-400 border-l border-gray-200 pl-5">
+            ${PRICE.toLocaleString('es-CL')} c/u
           </span>
         </div>
       </div>
 
       {/* Total */}
-      <div className="bg-gradient-to-br from-forest to-forest-mid text-white rounded-2xl p-6 text-center">
-        <div className="text-sm uppercase tracking-widest text-white/60 mb-1">Total a transferir</div>
-        <CopyValue
-          value={String(total)}
-          display={`$${total.toLocaleString('es-CL')}`}
-          variant="hero"
-        />
-        {data.cantidad > 1 && (
-          <p className="text-white/50 text-xs mt-2">{data.cantidad} juegos × ${PRICE_PER_UNIT.toLocaleString('es-CL')}</p>
-        )}
-      </div>
+      <TotalCard total={total} cantidad={data.cantidad} />
 
-      {/* Datos bancarios */}
-      <div className="bg-cream rounded-2xl p-4 space-y-1">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-semibold text-forest">Datos de transferencia</span>
-          <CopyAllButton text={allDataText} />
+      {/* Bank data */}
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+          <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">Datos de transferencia</span>
+          <CopyAllBtn text={allData} />
         </div>
-        <CopyRow label="Nombre"     value={BANK_INFO.nombre} />
-        <CopyRow label="RUT"        value={BANK_INFO.rut} />
-        <CopyRow label="Banco"      value={BANK_INFO.banco} />
-        <CopyRow label="Tipo"       value={BANK_INFO.tipoCuenta} />
-        <CopyRow label="N° cuenta"  value={BANK_INFO.numeroCuenta} highlight />
-        <CopyRow label="Email"      value={BANK_INFO.email} />
+        <div className="divide-y divide-gray-50">
+          <BankRow label="Nombre"    value={BANK.nombre} />
+          <BankRow label="RUT"       value={BANK.rut} />
+          <BankRow label="Banco"     value={BANK.banco} />
+          <BankRow label="Tipo"      value={BANK.tipoCuenta} />
+          <BankRow label="Cuenta"    value={BANK.numeroCuenta} mono />
+          <BankRow label="Email"     value={BANK.email} />
+        </div>
       </div>
 
-      {/* Aviso */}
-      <div className="bg-gold/10 border-l-4 border-gold rounded-r-2xl p-4">
-        <p className="text-sm text-forest">
-          <strong>Importante:</strong> en el comentario de la transferencia escribe{' '}
-          <strong>"HATI"</strong> y guarda el número de operación — lo necesitarás en el siguiente paso.
-        </p>
+      <div className="bg-amber-50 rounded-xl px-4 py-3 text-sm text-amber-800">
+        Escribe <strong>HATI</strong> en el comentario y guarda el número de operación.
       </div>
 
       <button
         onClick={onNext}
-        className="w-full bg-orange hover:bg-orange/90 text-white font-bold py-4 rounded-2xl text-lg transition-all shadow-lg shadow-orange/30"
+        className="w-full bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
       >
-        Ya transferí — Siguiente paso
+        Ya transferí →
       </button>
-
-      <p className="text-center text-xs text-gray-400">
-        ¿Aún no transfieres? Puedes hacerlo desde tu app de banco y volver acá.
-      </p>
     </div>
   )
 }
 
-function CopyAllButton({ text }: { text: string }) {
+function TotalCard({ total, cantidad }: { total: number; cantidad: number }) {
   const [copied, setCopied] = useState(false)
-  const handle = () => {
-    copyText(text)
+  const handleCopy = () => {
+    copy(String(total))
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    setTimeout(() => setCopied(false), 1500)
   }
   return (
     <button
-      onClick={handle}
-      className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
-        copied ? 'bg-forest text-white' : 'bg-white text-forest hover:bg-forest hover:text-white border border-gray-200'
-      }`}
+      onClick={handleCopy}
+      className="w-full bg-forest text-white rounded-2xl p-6 text-left hover:bg-forest-mid transition-colors group"
     >
-      {copied ? '✓ ¡Copiado!' : '📋 Copiar todo'}
+      <p className="text-white/50 text-xs uppercase tracking-widest mb-2">
+        Total a transferir {cantidad > 1 && `· ${cantidad} juegos`}
+      </p>
+      <div className="flex items-end justify-between">
+        <span className="text-5xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
+          ${total.toLocaleString('es-CL')}
+        </span>
+        <span className="text-white/50 text-sm mb-1">
+          {copied ? '✓ Copiado' : 'Tocar para copiar'}
+        </span>
+      </div>
     </button>
   )
 }
 
-function CopyRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function CopyAllBtn({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
   return (
-    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-gray-100 last:border-0">
-      <span className="text-sm text-gray-400 flex-shrink-0 w-24">{label}</span>
-      <CopyValue value={value} display={value} highlight={highlight} />
-    </div>
+    <button
+      onClick={() => { copy(text); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+      className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+        copied ? 'bg-forest text-white' : 'bg-gray-100 text-gray-600 hover:bg-forest hover:text-white'
+      }`}
+    >
+      {copied ? '✓ Copiado' : 'Copiar todo'}
+    </button>
   )
 }
 
-function CopyValue({
-  value, display, highlight, variant,
-}: {
-  value: string; display: string; highlight?: boolean; variant?: 'hero'
-}) {
+function BankRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   const [copied, setCopied] = useState(false)
-  const copy = () => {
-    copyText(value)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
-  }
-
-  if (variant === 'hero') {
-    return (
-      <button onClick={copy} className="block w-full mt-1">
-        <div className="text-5xl md:text-6xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
-          {display}
-        </div>
-        <div className="text-xs text-white/60 mt-2 flex items-center justify-center gap-1.5">
-          {copied ? '✓ ¡Copiado!' : '📋 Toca para copiar'}
-        </div>
-      </button>
-    )
-  }
-
   return (
     <button
-      onClick={copy}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors min-w-0 flex-1 justify-end ${
-        copied
-          ? 'bg-forest text-white'
-          : highlight
-          ? 'bg-white text-forest font-bold shadow-sm hover:bg-forest hover:text-white'
-          : 'text-forest hover:bg-white'
-      }`}
+      onClick={() => { copy(value); setCopied(true); setTimeout(() => setCopied(false), 1500) }}
+      className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors text-left group"
     >
-      <span className="font-mono text-sm md:text-base truncate">{display}</span>
-      <span className="text-xs flex-shrink-0">{copied ? '✓' : '📋'}</span>
+      <span className="text-sm text-gray-400 w-20 flex-shrink-0">{label}</span>
+      <span className={`flex-1 text-right text-sm font-medium text-forest ${mono ? 'font-mono' : ''}`}>
+        {value}
+      </span>
+      <span className="text-gray-300 group-hover:text-gray-500 text-xs ml-3 w-12 text-right transition-colors">
+        {copied ? '✓' : 'copiar'}
+      </span>
     </button>
   )
 }

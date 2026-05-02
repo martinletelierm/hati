@@ -1,94 +1,75 @@
 'use client'
 
-import type { WizardData } from '../PreSaleWizard'
 import { useState } from 'react'
+import type { WizardData } from '../PreSaleWizard'
 
 export default function StepOrderNumber({
-  data,
-  update,
-  onNext,
-  onBack,
+  data, update, onNext, onBack,
 }: {
   data: WizardData
-  update: (partial: Partial<WizardData>) => void
+  update: (p: Partial<WizardData>) => void
   onNext: () => void
   onBack: () => void
 }) {
   const [error, setError] = useState('')
 
-  const handleSubmit = () => {
-    if (!data.numeroPedido.trim()) {
-      setError('Ingresa tu número de comprobante para continuar')
-      return
-    }
+  const handleNext = () => {
     if (data.numeroPedido.trim().length < 4) {
-      setError('El número parece muy corto, revísalo')
+      setError('Ingresa el número de operación de tu transferencia')
       return
     }
-    setError('')
     onNext()
   }
 
   return (
-    <div className="space-y-6 animate-fade-up">
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 bg-magenta/10 text-magenta rounded-2xl mb-3 text-2xl">
-          🧾
-        </div>
-        <h2 className="text-2xl md:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
-          Número de comprobante
+    <div className="space-y-8">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 2</p>
+        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+          N° de operación
         </h2>
-        <p className="text-gray-500 mt-2 text-sm">
-          Es el número que aparece en el comprobante de tu transferencia
+        <p className="text-gray-400 mt-1 text-sm">
+          Aparece en el comprobante de tu transferencia
         </p>
       </div>
 
-      <div className="bg-cream rounded-2xl p-5 text-sm text-forest space-y-2">
-        <p className="font-semibold">¿Dónde encontrar este número?</p>
-        <ul className="space-y-1.5 text-gray-600 text-sm">
-          <li className="flex gap-2"><span className="text-orange">→</span>En la app de tu banco, después de transferir</li>
-          <li className="flex gap-2"><span className="text-orange">→</span>En el correo de confirmación de tu banco</li>
-          <li className="flex gap-2"><span className="text-orange">→</span>Suele llamarse "N° de operación" o "comprobante"</li>
-        </ul>
-      </div>
-
       <div>
-        <label className="block text-sm font-semibold text-forest mb-2">
-          Número de comprobante / operación <span className="text-orange">*</span>
-        </label>
         <input
           autoFocus
+          type="text"
+          inputMode="numeric"
           value={data.numeroPedido}
-          onChange={(e) => {
-            update({ numeroPedido: e.target.value })
-            if (error) setError('')
-          }}
-          placeholder="Ej: 12345678"
-          className={`w-full px-5 py-4 text-lg border-2 rounded-2xl focus:outline-none transition-colors ${
+          onChange={e => { update({ numeroPedido: e.target.value }); setError('') }}
+          onKeyDown={e => e.key === 'Enter' && handleNext()}
+          placeholder="Ej: 123456789"
+          className={`w-full text-2xl font-mono font-bold py-5 px-5 rounded-2xl border-2 outline-none transition-colors placeholder:text-gray-200 ${
             error
-              ? 'border-red-400 bg-red-50'
-              : 'border-gray-200 focus:border-forest bg-white'
+              ? 'border-red-300 bg-red-50 text-red-800'
+              : 'border-gray-200 focus:border-forest bg-white text-forest'
           }`}
         />
-        {error && (
-          <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
-            <span>⚠️</span> {error}
-          </p>
-        )}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="bg-gray-50 rounded-xl px-4 py-4 space-y-1.5">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">¿Dónde está?</p>
+        <p className="text-sm text-gray-500">→ En la app de tu banco, tras confirmar el pago</p>
+        <p className="text-sm text-gray-500">→ En el email de confirmación de tu banco</p>
+        <p className="text-sm text-gray-500">→ También puede llamarse "N° de comprobante"</p>
+      </div>
+
+      <div className="flex gap-3">
         <button
           onClick={onBack}
-          className="sm:flex-shrink-0 px-6 py-3 border-2 border-gray-200 text-gray-600 font-semibold rounded-2xl hover:bg-gray-50 transition-colors"
+          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
         >
-          ← Volver
+          ←
         </button>
         <button
-          onClick={handleSubmit}
-          className="flex-1 bg-orange hover:bg-orange/90 text-white font-bold py-4 rounded-2xl text-lg transition-all shadow-lg shadow-orange/30"
+          onClick={handleNext}
+          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
         >
-          Continuar al envío
+          Continuar →
         </button>
       </div>
     </div>

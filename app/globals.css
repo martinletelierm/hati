@@ -2,34 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
-  background-color: #F8F4EE;
+  background: #F7F6F2;
   color: #1C3D35;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+.step-enter { animation: slideUp 0.35s cubic-bezier(0.22,1,0.36,1) forwards; }
 
-@keyframes copied {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+/* Google Places dropdown */
+.pac-container {
+  border-radius: 12px;
+  border: 1.5px solid #E5E5E0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  margin-top: 4px;
 }
-
-.animate-fade-up { animation: fadeUp 0.5s ease forwards; }
-.animate-copied { animation: copied 0.3s ease; }
+.pac-item { padding: 10px 14px; cursor: pointer; }
+.pac-item:hover { background: #F7F6F2; }
+.pac-item-selected { background: #F7F6F2; }
+.pac-icon { display: none; }
+.pac-item-query { font-weight: 600; color: #1C3D35; }
+.pac-matched { color: #E8632A; }
