@@ -6,13 +6,24 @@ import type { WizardData } from '../PreSaleWizard'
 const PRICE = 27990
 
 const BANK = {
-  nombre:       'Clara Valenzuela',
-  rut:          '20.428.300-1',
-  banco:        'Banco Santander',
-  tipoCuenta:   'Cuenta Corriente',
-  numeroCuenta: '000082103694',
-  email:        'clara.valenzuela@uc.cl',
+  beneficiario: 'Editorial SJS',
+  rut:          '76.996.471-1',
+  banco:        'Banco Estado',
+  tipoCuenta:   'Cuenta Vista / Chequera Electrónica',
+  numeroCuenta: '34371448367',
+  email:        'ventas@editorialsjs.com',
+  asunto:       'HATI',
 }
+
+const COPY_BLOCK = [
+  BANK.beneficiario,
+  BANK.rut,
+  BANK.banco,
+  BANK.tipoCuenta,
+  BANK.numeroCuenta,
+  BANK.email,
+  BANK.asunto,
+].join('\n')
 
 function copy(text: string) {
   try { navigator.clipboard.writeText(text) } catch {
@@ -26,7 +37,7 @@ export default function StepTransfer({
   data, update, onNext, onBack,
 }: { data: WizardData; update: (p: Partial<WizardData>) => void; onNext: () => void; onBack: () => void }) {
   const total = data.cantidad * PRICE
-  const allData = Object.values(BANK).join('\n')
+  const allData = COPY_BLOCK
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -71,17 +82,18 @@ export default function StepTransfer({
           <CopyAllBtn text={allData} />
         </div>
         <div className="divide-y divide-gray-50">
-          <BankRow label="Nombre"   value={BANK.nombre} />
-          <BankRow label="RUT"      value={BANK.rut} />
-          <BankRow label="Banco"    value={BANK.banco} />
-          <BankRow label="Tipo"     value={BANK.tipoCuenta} />
-          <BankRow label="Cuenta"   value={BANK.numeroCuenta} mono />
-          <BankRow label="Email"    value={BANK.email} />
+          <BankRow label="Beneficiario" value={BANK.beneficiario} />
+          <BankRow label="RUT"          value={BANK.rut} />
+          <BankRow label="Banco"        value={BANK.banco} />
+          <BankRow label="Tipo"        value={BANK.tipoCuenta} />
+          <BankRow label="Nº cuenta"   value={BANK.numeroCuenta} mono />
+          <BankRow label="Correo"      value={BANK.email} />
+          <BankRow label="Asunto"      value={BANK.asunto} />
         </div>
       </div>
 
       <div className="bg-amber-50 rounded-xl px-4 py-3 text-sm text-amber-800">
-        Escribe <strong>HATI</strong> en el comentario y guarda el número de operación.
+        En el <strong>asunto o mensaje</strong> de la transferencia indica <strong>HATI</strong> y conserva el número de operación.
       </div>
 
       <div className="flex gap-3">
@@ -144,7 +156,7 @@ function CopyAllBtn({ text }: { text: string }) {
 function BankRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 px-4 sm:px-5 py-3.5">
-      <span className="text-sm text-gray-400 sm:w-20 shrink-0">{label}</span>
+      <span className="text-sm text-gray-400 sm:min-w-[7.5rem] shrink-0">{label}</span>
       <span className={`text-sm font-medium text-forest sm:text-right break-all ${mono ? 'font-mono' : ''}`}>
         {value}
       </span>
