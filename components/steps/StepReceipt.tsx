@@ -40,11 +40,13 @@ export default function StepReceipt({
       const form = new FormData()
       form.append('file', file)
       const res = await fetch('/api/upload', { method: 'POST', body: form })
-      if (!res.ok) throw new Error('Upload failed')
-      const { url } = await res.json()
+      const payload = await res.json().catch(() => ({} as { error?: string; url?: string }))
+      if (!res.ok || !payload.url) throw new Error(payload.error ?? 'Upload failed')
+      const { url } = payload
       update({ comprobanteFile: file, comprobanteUrl: url })
-    } catch {
-      setError('Error al subir la imagen. Intenta nuevamente.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error desconocido'
+      setError(`Error al subir la imagen: ${message}`)
       setPreview(null)
     } finally {
       setUploading(false)
