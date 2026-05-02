@@ -22,10 +22,10 @@ export default function StepMachine({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 1</p>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           N° de boleta o voucher
         </h2>
         <p className="text-gray-400 mt-1 text-sm">
@@ -42,7 +42,7 @@ export default function StepMachine({
           onChange={e => { update({ numeroBoleta: e.target.value }); setError('') }}
           onKeyDown={e => e.key === 'Enter' && handleNext()}
           placeholder="Ej: 00123456"
-          className={`w-full text-2xl font-mono font-bold py-5 px-5 rounded-2xl border-2 outline-none transition-colors placeholder:text-gray-200 ${
+          className={`w-full text-xl sm:text-2xl font-mono font-bold py-4 sm:py-5 px-4 sm:px-5 rounded-2xl border-2 outline-none transition-colors placeholder:text-gray-200 ${
             error
               ? 'border-red-300 bg-red-50 text-red-800'
               : 'border-gray-200 focus:border-forest bg-white text-forest'
@@ -61,11 +61,13 @@ export default function StepMachine({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          className="min-w-14 px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          aria-label="Volver"
         >←</button>
         <button
+          type="button"
           onClick={handleNext}
-          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
+          className="flex-1 min-h-14 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
         >
           Continuar →
         </button>

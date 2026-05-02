@@ -29,10 +29,10 @@ export default function StepTransfer({
   const allData = Object.values(BANK).join('\n')
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 1</p>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Transfiere el monto
         </h2>
         <p className="text-gray-400 mt-1 text-sm">Usa tu app de banco con los datos de abajo</p>
@@ -41,17 +41,19 @@ export default function StepTransfer({
       {/* Quantity */}
       <div>
         <p className="text-sm font-medium text-gray-500 mb-3">¿Cuántos juegos?</p>
-        <div className="inline-flex items-center gap-5 bg-white border border-gray-200 rounded-2xl px-5 py-3">
+        <div className="w-full sm:w-auto inline-flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 bg-white border border-gray-200 rounded-2xl px-4 sm:px-5 py-3">
           <button
+            type="button"
             onClick={() => update({ cantidad: Math.max(1, data.cantidad - 1) })}
             className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-forest hover:text-white text-forest font-bold text-lg transition-colors flex items-center justify-center"
           >−</button>
           <span className="text-2xl font-bold w-6 text-center tabular-nums">{data.cantidad}</span>
           <button
+            type="button"
             onClick={() => update({ cantidad: data.cantidad + 1 })}
             className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-forest hover:text-white text-forest font-bold text-lg transition-colors flex items-center justify-center"
           >+</button>
-          <span className="text-sm text-gray-400 border-l border-gray-200 pl-5">
+          <span className="w-full sm:w-auto text-center sm:text-left text-sm text-gray-400 sm:border-l border-gray-200 sm:pl-5">
             ${PRICE.toLocaleString('es-CL')} c/u
           </span>
         </div>
@@ -86,11 +88,13 @@ export default function StepTransfer({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          className="min-w-14 px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          aria-label="Volver"
         >←</button>
         <button
+          type="button"
           onClick={onNext}
-          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
+          className="flex-1 min-h-14 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
         >
           Ya transferí →
         </button>
@@ -103,17 +107,18 @@ function TotalCard({ total, cantidad }: { total: number; cantidad: number }) {
   const [copied, setCopied] = useState(false)
   return (
     <button
+      type="button"
       onClick={() => { copy(String(total)); setCopied(true); setTimeout(() => setCopied(false), 1500) }}
-      className="w-full bg-forest text-white rounded-2xl p-6 text-left hover:bg-forest-mid transition-colors"
+      className="w-full bg-forest text-white rounded-2xl p-5 sm:p-6 text-left hover:bg-forest-mid transition-colors"
     >
       <p className="text-white/50 text-xs uppercase tracking-widest mb-2">
         Total a transferir {cantidad > 1 && `· ${cantidad} juegos`}
       </p>
-      <div className="flex items-end justify-between">
-        <span className="text-5xl font-bold" style={{ fontFamily: 'Georgia, serif' }}>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+        <span className="text-4xl sm:text-5xl font-bold leading-none" style={{ fontFamily: 'Georgia, serif' }}>
           ${total.toLocaleString('es-CL')}
         </span>
-        <span className="text-white/50 text-sm mb-1">
+        <span className="text-white/50 text-sm sm:mb-1">
           {copied ? '✓ Copiado' : 'Tocar para copiar'}
         </span>
       </div>
@@ -125,6 +130,7 @@ function CopyAllBtn({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
   return (
     <button
+      type="button"
       onClick={() => { copy(text); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
       className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
         copied ? 'bg-forest text-white' : 'bg-gray-100 text-gray-600 hover:bg-forest hover:text-white'
@@ -137,9 +143,9 @@ function CopyAllBtn({ text }: { text: string }) {
 
 function BankRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
-    <div className="flex items-center justify-between px-5 py-3.5">
-      <span className="text-sm text-gray-400 w-20 flex-shrink-0">{label}</span>
-      <span className={`text-sm font-medium text-forest text-right ${mono ? 'font-mono' : ''}`}>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 px-4 sm:px-5 py-3.5">
+      <span className="text-sm text-gray-400 sm:w-20 shrink-0">{label}</span>
+      <span className={`text-sm font-medium text-forest sm:text-right break-all ${mono ? 'font-mono' : ''}`}>
         {value}
       </span>
     </div>

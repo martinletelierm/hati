@@ -30,9 +30,9 @@ export default function StepPaymentType({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           ¿Cómo pagaste?
         </h2>
         <p className="text-gray-400 mt-1 text-sm">Elige la forma de pago para continuar</p>
@@ -42,15 +42,16 @@ export default function StepPaymentType({
         {OPTIONS.map(opt => (
           <button
             key={opt.type}
+            type="button"
             onClick={() => select(opt.type)}
-            className="w-full flex items-center gap-5 bg-white border-2 border-gray-100 hover:border-forest hover:bg-forest/5 rounded-2xl p-5 text-left transition-all group"
+            className="w-full min-h-24 flex items-center gap-4 sm:gap-5 bg-white border-2 border-gray-100 hover:border-forest hover:bg-forest/5 rounded-2xl p-4 sm:p-5 text-left transition-all group"
           >
-            <span className="text-3xl flex-shrink-0">{opt.icon}</span>
+            <span className="text-3xl shrink-0">{opt.icon}</span>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-forest text-base">{opt.title}</p>
               <p className="text-sm text-gray-400 mt-0.5">{opt.desc}</p>
             </div>
-            <span className="text-gray-300 group-hover:text-forest transition-colors text-xl flex-shrink-0">→</span>
+            <span className="text-gray-300 group-hover:text-forest transition-colors text-xl shrink-0">→</span>
           </button>
         ))}
       </div>

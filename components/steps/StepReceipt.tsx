@@ -59,10 +59,10 @@ export default function StepReceipt({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 2</p>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Sube tu comprobante
         </h2>
         <p className="text-gray-400 mt-1 text-sm">Foto o captura del comprobante de transferencia</p>
@@ -87,25 +87,25 @@ export default function StepReceipt({
           }`}
         >
           {uploading ? (
-            <div className="py-12 flex flex-col items-center gap-3">
+            <div className="py-10 sm:py-12 flex flex-col items-center gap-3">
               <div className="w-8 h-8 border-2 border-forest border-t-transparent rounded-full animate-spin" />
               <p className="text-sm text-gray-400">Subiendo…</p>
             </div>
           ) : preview === 'pdf' ? (
-            <div className="py-12 flex flex-col items-center gap-2">
+            <div className="py-10 sm:py-12 flex flex-col items-center gap-2">
               <span className="text-4xl">📄</span>
               <p className="text-sm font-medium text-forest">PDF subido</p>
               <p className="text-xs text-gray-400">Toca para cambiar</p>
             </div>
           ) : preview ? (
             <div className="relative">
-              <img src={preview} alt="Comprobante" className="w-full max-h-64 object-contain p-2" />
+              <img src={preview} alt="Comprobante" className="w-full max-h-56 sm:max-h-64 object-contain p-2" />
               <div className="absolute bottom-2 right-2 bg-white/90 text-xs text-gray-500 px-2 py-1 rounded-lg">
                 Toca para cambiar
               </div>
             </div>
           ) : (
-            <div className="py-12 flex flex-col items-center gap-3">
+            <div className="py-10 sm:py-12 flex flex-col items-center gap-3">
               <span className="text-4xl">📸</span>
               <div className="text-center">
                 <p className="text-sm font-semibold text-forest">Subir comprobante</p>
@@ -121,12 +121,14 @@ export default function StepReceipt({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          className="min-w-14 px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          aria-label="Volver"
         >←</button>
         <button
+          type="button"
           onClick={handleNext}
           disabled={uploading}
-          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors disabled:opacity-50"
+          className="flex-1 min-h-14 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors disabled:opacity-50"
         >
           Continuar →
         </button>

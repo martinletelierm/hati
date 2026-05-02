@@ -79,16 +79,16 @@ export default function PreSaleWizard() {
   const progressStep = step // step 0 es elegir tipo, no cuenta como "progreso"
 
   return (
-    <div>
+    <div className="w-full">
       {step > 0 && (
-        <div className="flex items-center gap-3 mb-8 px-1">
+        <div className="flex items-center gap-3 mb-6 sm:mb-8 px-1">
           <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-forest rounded-full transition-all duration-500"
               style={{ width: `${(step / (totalSteps - 1)) * 100}%` }}
             />
           </div>
-          <span className="text-xs font-medium text-gray-400 tabular-nums flex-shrink-0">
+          <span className="text-xs font-medium text-gray-400 tabular-nums shrink-0">
             {step} / {totalSteps - 1}
           </span>
         </div>

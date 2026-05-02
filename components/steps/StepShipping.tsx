@@ -51,7 +51,7 @@ export default function StepShipping({
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 3</p>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Datos de envío
         </h2>
         <p className="text-gray-400 mt-1 text-sm">Te contactamos por WhatsApp para coordinar</p>
@@ -69,7 +69,7 @@ export default function StepShipping({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Email" error={errors.email}>
             <input
               type="email"
@@ -158,14 +158,15 @@ export default function StepShipping({
         <button
           type="button"
           onClick={onBack}
-          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          className="min-w-14 px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          aria-label="Volver"
         >
           ←
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors disabled:opacity-50"
+          className="flex-1 min-h-14 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors disabled:opacity-50"
         >
           {loading ? 'Enviando…' : 'Confirmar reserva'}
         </button>
@@ -175,7 +176,7 @@ export default function StepShipping({
 }
 
 const cls = (err?: string) =>
-  `w-full py-4 px-5 rounded-2xl border-2 outline-none transition-colors text-base bg-white ${
+  `w-full py-4 px-4 sm:px-5 rounded-2xl border-2 outline-none transition-colors text-base bg-white ${
     err ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-forest'
   }`
 

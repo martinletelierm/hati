@@ -8,14 +8,14 @@ export default function StepConfirmation({ data }: { data: WizardData }) {
     .filter(Boolean).join(', ')
 
   return (
-    <div className="text-center space-y-8 step-enter">
+    <div className="text-center space-y-6 sm:space-y-8 step-enter">
       <div>
         <div className="w-16 h-16 bg-forest rounded-full flex items-center justify-center mx-auto mb-5">
           <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>¡Listo!</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>¡Listo!</h2>
         <p className="text-gray-400 mt-2">Tu reserva quedó registrada</p>
       </div>
 
@@ -41,9 +41,9 @@ export default function StepConfirmation({ data }: { data: WizardData }) {
 
 function Row({ label, value, mono, bold }: { label: string; value: string; mono?: boolean; bold?: boolean }) {
   return (
-    <div className="flex items-start justify-between px-5 py-4 gap-4">
-      <span className="text-sm text-gray-400 flex-shrink-0">{label}</span>
-      <span className={`text-sm text-right break-words max-w-[65%] ${mono ? 'font-mono' : ''} ${bold ? 'font-bold text-forest' : 'text-gray-700'}`}>
+    <div className="flex items-start justify-between px-4 sm:px-5 py-4 gap-4">
+      <span className="text-sm text-gray-400 shrink-0">{label}</span>
+      <span className={`text-sm text-right break-words min-w-0 max-w-[65%] ${mono ? 'font-mono' : ''} ${bold ? 'font-bold text-forest' : 'text-gray-700'}`}>
         {value}
       </span>
     </div>
