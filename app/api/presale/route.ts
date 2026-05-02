@@ -1,19 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabase } from '@/lib/supabase'
 
+export const dynamic = 'force-dynamic'
+
+const PRICE_EARLY = 27990
+const PRICE_REGULAR = 29990
+const DAILY_LIMIT = 20
+
 export async function POST(request: NextRequest) {
   const body = await request.json()
   const {
-    nombre, email, telefono, rut,
-    direccion, ciudad, comuna, cantidad,
-    ubicacion, precioTotal, numeroPedido,
+    numeroPedido, nombre, email, telefono, rut,
+    direccion, ciudad, comuna, ubicacion,
   } = body
 
-  if (!nombre || !email || !rut || !direccion) {
+  if (!numeroPedido || !nombre || !email || !rut || !direccion) {
     return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
   }
 
-  const { error } = await getSupabase().from('preorders').insert({
+  const supabase = getSupabase()
+
+  // Calcular precio según ventas del día
+  const { data: salesData } = await supabase.from('daily_sales').select('total').single()
+  const sold = Number(salesData?.total ?? 0)
+  const precio = sold < DAILY_LIMIT ? PRICE_EARLY : PRICE_REGULAR
+
+  const { error } = await supabase.from('preorders').insert({
     numero_pedido: numeroPedido,
     nombre,
     email,
@@ -22,8 +34,8 @@ export async function POST(request: NextRequest) {
     direccion,
     ciudad,
     comuna,
-    cantidad,
-    precio_total: precioTotal,
+    cantidad: 1,
+    precio_total: precio,
     ubicacion_lat: ubicacion?.lat ?? null,
     ubicacion_lng: ubicacion?.lng ?? null,
   })
@@ -33,5 +45,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Error guardando la pre-orden' }, { status: 500 })
   }
 
-  return NextResponse.json({ success: true, numeroPedido }, { status: 201 })
+  return NextResponse.json({ success: true, numeroPedido, precio }, { status: 201 })
 }
