@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
     nombre, email, telefono, rut,
     direccion,
     departamento: departamento || null,
-    comuna, ciudad, region,
+    comuna,
+    ciudad: ciudad || null,
+    region,
     cantidad: Number(cantidad),
     precio_total: Number(cantidad) * PRICE_PER_UNIT,
   })
