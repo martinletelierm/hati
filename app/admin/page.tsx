@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react'
 
 type Order = {
   id: string
+  tipo_pago: string
   numero_pedido: string
+  numero_boleta: string | null
+  comprobante_url: string | null
   nombre: string
   email: string
   telefono: string
@@ -20,23 +23,6 @@ type Order = {
   created_at: string
 }
 
-const COLUMNS: { key: keyof Order; label: string; format?: (v: any) => string }[] = [
-  { key: 'created_at',    label: 'Fecha',        format: (v) => new Date(v).toLocaleString('es-CL') },
-  { key: 'numero_pedido', label: 'N° Comprobante' },
-  { key: 'status',        label: 'Estado' },
-  { key: 'nombre',        label: 'Nombre' },
-  { key: 'email',         label: 'Email' },
-  { key: 'telefono',      label: 'Teléfono' },
-  { key: 'rut',           label: 'RUT' },
-  { key: 'direccion',     label: 'Dirección' },
-  { key: 'departamento',  label: 'Depto/Casa', format: (v) => v ?? '—' },
-  { key: 'comuna',        label: 'Comuna' },
-  { key: 'ciudad',        label: 'Ciudad' },
-  { key: 'region',        label: 'Región' },
-  { key: 'cantidad',      label: 'Cantidad' },
-  { key: 'precio_total',  label: 'Precio',        format: (v) => `$${Number(v).toLocaleString('es-CL')}` },
-]
-
 const STATUS_COLORS: Record<string, string> = {
   pending:   'bg-yellow-100 text-yellow-800',
   paid:      'bg-green-100 text-green-800',
@@ -44,11 +30,17 @@ const STATUS_COLORS: Record<string, string> = {
   cancelled: 'bg-red-100 text-red-800',
 }
 
+const TIPO_LABELS: Record<string, string> = {
+  transferencia: '🏦 Transferencia',
+  maquina:       '💳 Máquina',
+}
+
 export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [preview, setPreview] = useState<string | null>(null)
 
   const fetchOrders = async () => {
     setLoading(true)
@@ -78,13 +70,26 @@ export default function AdminPage() {
   }
 
   const exportCSV = () => {
-    const headers = COLUMNS.map((c) => c.label).join(',')
-    const rows = filtered.map((o) =>
-      COLUMNS.map((c) => {
-        const v = c.format ? c.format(o[c.key]) : o[c.key] ?? ''
-        return `"${String(v).replace(/"/g, '""')}"`
-      }).join(',')
-    )
+    const headers = [
+      'Fecha', 'Tipo Pago', 'N° Comprobante', 'N° Boleta', 'Estado',
+      'Nombre', 'Email', 'Teléfono', 'RUT',
+      'Dirección', 'Depto', 'Comuna', 'Ciudad', 'Región',
+      'Cantidad', 'Precio Total', 'URL Comprobante',
+    ].join(',')
+
+    const rows = filtered.map((o) => [
+      new Date(o.created_at).toLocaleString('es-CL'),
+      o.tipo_pago,
+      o.numero_pedido,
+      o.numero_boleta ?? '',
+      o.status,
+      o.nombre, o.email, o.telefono, o.rut,
+      o.direccion, o.departamento ?? '', o.comuna, o.ciudad, o.region,
+      o.cantidad,
+      o.precio_total,
+      o.comprobante_url ?? '',
+    ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','))
+
     const csv = [headers, ...rows].join('\n')
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -100,6 +105,36 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Image preview modal */}
+      {preview && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setPreview(null)}
+        >
+          <div className="relative max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setPreview(null)}
+              className="absolute -top-10 right-0 text-white text-sm font-medium hover:text-gray-300"
+            >
+              ✕ Cerrar
+            </button>
+            {preview.endsWith('.pdf') || preview.includes('/pdf') ? (
+              <iframe src={preview} className="w-full h-[80vh] rounded-xl" />
+            ) : (
+              <img src={preview} alt="Comprobante" className="w-full rounded-xl max-h-[80vh] object-contain bg-white" />
+            )}
+            <a
+              href={preview}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 block text-center text-white/70 text-xs hover:text-white underline"
+            >
+              Abrir en nueva pestaña →
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-forest text-white px-6 py-5 flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -166,28 +201,49 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    {COLUMNS.map((c) => (
-                      <th key={c.key} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap">
-                        {c.label}
+                    {['Fecha', 'Tipo pago', 'N° Comprobante', 'Estado', 'Comprobante', 'Nombre', 'Email', 'Teléfono', 'RUT', 'Dirección', 'Depto', 'Comuna', 'Región', 'Cant.', 'Total', 'Acción'].map((h) => (
+                      <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap">
+                        {h}
                       </th>
                     ))}
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">
-                      Acción
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {filtered.map((order) => (
                     <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                      {COLUMNS.map((c) => (
-                        <td key={c.key} className="px-4 py-3 whitespace-nowrap text-gray-700">
-                          {c.key === 'status' ? (
-                            <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLORS[order.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                              {order.status}
-                            </span>
-                          ) : c.format ? c.format(order[c.key]) : String(order[c.key] ?? '-')}
-                        </td>
-                      ))}
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-500 text-xs">{new Date(order.created_at).toLocaleString('es-CL')}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs">{TIPO_LABELS[order.tipo_pago] ?? order.tipo_pago}</td>
+                      <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-gray-700">
+                        {order.numero_pedido}
+                        {order.numero_boleta && <div className="text-gray-400">Boleta: {order.numero_boleta}</div>}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_COLORS[order.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        {order.comprobante_url ? (
+                          <button
+                            onClick={() => setPreview(order.comprobante_url!)}
+                            className="text-xs text-forest underline hover:text-forest/70 font-medium"
+                          >
+                            Ver imagen
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-300">—</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-700">{order.nombre}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-500 text-xs">{order.email}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-gray-500 text-xs">{order.telefono}</td>
+                      <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-gray-700">{order.rut}</td>
+                      <td className="px-4 py-3 text-gray-500 text-xs max-w-[180px] truncate">{order.direccion}{order.departamento ? `, ${order.departamento}` : ''}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-500">{order.departamento ?? '—'}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-700">{order.comuna}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs text-gray-500">{order.region}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-center font-bold text-forest">{order.cantidad}</td>
+                      <td className="px-4 py-3 whitespace-nowrap font-semibold text-gray-700">${Number(order.precio_total).toLocaleString('es-CL')}</td>
                       <td className="px-4 py-3">
                         <select
                           value={order.status}
