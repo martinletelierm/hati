@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
   }
 
-  const { error } = await supabase.from('preorders').insert({
+  const { error } = await getSupabase().from('preorders').insert({
     numero_pedido: numeroPedido,
     nombre,
     email,
