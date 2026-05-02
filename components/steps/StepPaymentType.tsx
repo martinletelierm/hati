@@ -18,11 +18,12 @@ const OPTIONS: { type: PaymentType; title: string; desc: string; icon: string }[
 ]
 
 export default function StepPaymentType({
-  data, update, onNext,
+  data, update, onNext, onBack,
 }: {
   data: WizardData
   update: (p: Partial<WizardData>) => void
   onNext: () => void
+  onBack: () => void
 }) {
   const select = (tipo: PaymentType) => {
     update({ tipoPago: tipo })
@@ -32,6 +33,7 @@ export default function StepPaymentType({
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 2</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           ¿Cómo pagaste?
         </h2>
@@ -54,6 +56,17 @@ export default function StepPaymentType({
             <span className="text-gray-300 group-hover:text-forest transition-colors text-xl shrink-0">→</span>
           </button>
         ))}
+      </div>
+
+      <div className="flex gap-3 pt-2">
+        <button
+          type="button"
+          onClick={onBack}
+          className="min-w-14 px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+          aria-label="Volver"
+        >
+          ←
+        </button>
       </div>
     </div>
   )

@@ -61,7 +61,7 @@ export default function StepReceipt({
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 2</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 4</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Sube tu comprobante
         </h2>

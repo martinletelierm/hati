@@ -5,12 +5,13 @@ import type { WizardData } from '../PreSaleWizard'
 import { REGIONES } from '@/lib/chile'
 
 export default function StepShipping({
-  data, update, onSubmit, onBack,
+  data, update, onSubmit, onBack, paso = 3,
 }: {
   data: WizardData
   update: (p: Partial<WizardData>) => void
   onSubmit: () => Promise<void>
   onBack: () => void
+  paso?: number
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
@@ -50,7 +51,7 @@ export default function StepShipping({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 3</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso {paso}</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           Datos de envío
         </h2>

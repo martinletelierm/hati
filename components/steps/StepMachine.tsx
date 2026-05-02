@@ -24,7 +24,7 @@ export default function StepMachine({
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 1</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Paso 3</p>
         <h2 className="text-2xl sm:text-3xl font-bold text-forest" style={{ fontFamily: 'Georgia, serif' }}>
           N° de boleta o voucher
         </h2>

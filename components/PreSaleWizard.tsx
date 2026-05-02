@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import StepCantidad from './steps/StepCantidad'
 import StepPaymentType from './steps/StepPaymentType'
 import StepTransfer from './steps/StepTransfer'
 import StepReceipt from './steps/StepReceipt'
@@ -46,10 +47,10 @@ export default function PreSaleWizard() {
   const next = () => setStep(s => s + 1)
   const back = () => setStep(s => s - 1)
 
-  // Pasos según tipo de pago:
-  // Transferencia: 0-tipo | 1-transferencia | 2-comprobante | 3-envío
-  // Máquina:       0-tipo | 1-boleta        | 2-envío
-  const totalSteps = data.tipoPago === 'maquina' ? 3 : 4
+  // Pasos:
+  // Transferencia: 0-cantidad | 1-tipo | 2-transferencia | 3-comprobante | 4-envío
+  // Máquina:       0-cantidad | 1-tipo | 2-boleta        | 3-envío
+  const totalSteps = data.tipoPago === 'maquina' ? 4 : 5
 
   const onComplete = async () => {
     const res = await fetch('/api/presale', {
@@ -76,50 +77,50 @@ export default function PreSaleWizard() {
 
   if (submitted) return <StepConfirmation data={data} />
 
-  const progressStep = step // step 0 es elegir tipo, no cuenta como "progreso"
-
   return (
     <div className="w-full">
-      {step > 0 && (
-        <div className="flex items-center gap-3 mb-6 sm:mb-8 px-1">
-          <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-forest rounded-full transition-all duration-500"
-              style={{ width: `${(step / (totalSteps - 1)) * 100}%` }}
-            />
-          </div>
-          <span className="text-xs font-medium text-gray-400 tabular-nums shrink-0">
-            {step} / {totalSteps - 1}
-          </span>
+      <div className="flex items-center gap-3 mb-6 sm:mb-8 px-1">
+        <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-forest rounded-full transition-all duration-500"
+            style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
+          />
         </div>
-      )}
+        <span className="text-xs font-medium text-gray-400 tabular-nums shrink-0">
+          {step + 1} / {totalSteps}
+        </span>
+      </div>
 
       <div key={step} className="step-enter">
         {step === 0 && (
+          <StepCantidad data={data} update={update} onNext={next} />
+        )}
+        {step === 1 && (
           <StepPaymentType
             data={data}
             update={update}
             onNext={next}
+            onBack={back}
           />
         )}
 
         {/* Flujo transferencia */}
-        {data.tipoPago === 'transferencia' && step === 1 && (
+        {data.tipoPago === 'transferencia' && step === 2 && (
           <StepTransfer data={data} update={update} onNext={next} onBack={back} />
         )}
-        {data.tipoPago === 'transferencia' && step === 2 && (
+        {data.tipoPago === 'transferencia' && step === 3 && (
           <StepReceipt data={data} update={update} onNext={next} onBack={back} />
         )}
-        {data.tipoPago === 'transferencia' && step === 3 && (
-          <StepShipping data={data} update={update} onSubmit={onComplete} onBack={back} />
+        {data.tipoPago === 'transferencia' && step === 4 && (
+          <StepShipping data={data} update={update} onSubmit={onComplete} onBack={back} paso={5} />
         )}
 
         {/* Flujo máquina */}
-        {data.tipoPago === 'maquina' && step === 1 && (
+        {data.tipoPago === 'maquina' && step === 2 && (
           <StepMachine data={data} update={update} onNext={next} onBack={back} />
         )}
-        {data.tipoPago === 'maquina' && step === 2 && (
-          <StepShipping data={data} update={update} onSubmit={onComplete} onBack={back} />
+        {data.tipoPago === 'maquina' && step === 3 && (
+          <StepShipping data={data} update={update} onSubmit={onComplete} onBack={back} paso={4} />
         )}
       </div>
     </div>
