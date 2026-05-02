@@ -22,13 +22,20 @@ type FormData = z.infer<typeof formSchema>
 const PRICE_EARLY = 27990
 const PRICE_REGULAR = 29990
 const DAILY_LIMIT = 20
-const SOLD_TODAY = 15 // In production: fetch from server
 
 export default function PreSaleForm() {
   const [mapLocation, setMapLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [numeroPedido, setNumeroPedido] = useState('')
   const [loading, setLoading] = useState(false)
+  const [soldToday, setSoldToday] = useState(0)
+
+  useEffect(() => {
+    fetch('/api/daily-sales')
+      .then((r) => r.json())
+      .then((d) => setSoldToday(d.total ?? 0))
+      .catch(() => {})
+  }, [])
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -37,7 +44,7 @@ export default function PreSaleForm() {
 
   const cantidad = watch('cantidad') || 1
 
-  const unitsAtEarly = Math.max(0, DAILY_LIMIT - SOLD_TODAY)
+  const unitsAtEarly = Math.max(0, DAILY_LIMIT - soldToday)
   const earlyUnits = Math.min(cantidad, unitsAtEarly)
   const regularUnits = cantidad - earlyUnits
   const total = earlyUnits * PRICE_EARLY + regularUnits * PRICE_REGULAR
@@ -175,7 +182,7 @@ export default function PreSaleForm() {
                 </span>
               </div>
               <div className="text-xs text-white/40 mt-1">
-                {DAILY_LIMIT - SOLD_TODAY} unidades disponibles a precio especial hoy
+                {Math.max(0, DAILY_LIMIT - soldToday)} unidades disponibles a precio especial hoy
               </div>
             </div>
           </div>
