@@ -53,7 +53,6 @@ export default function StepReceipt({
 
   const handleNext = () => {
     if (!data.comprobanteUrl) { setError('Sube el comprobante para continuar'); return }
-    if (!data.numeroPedido.trim()) { setError('Ingresa el número de operación'); return }
     onNext()
   }
 
@@ -114,20 +113,6 @@ export default function StepReceipt({
           )}
         </button>
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      </div>
-
-      {/* Número de operación */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-500">N° de operación</label>
-        <input
-          type="text"
-          inputMode="numeric"
-          value={data.numeroPedido}
-          onChange={e => { update({ numeroPedido: e.target.value }); setError('') }}
-          placeholder="Ej: 123456789"
-          className="w-full py-4 px-5 rounded-2xl border-2 border-gray-200 focus:border-forest outline-none text-base bg-white font-mono"
-        />
-        <p className="text-xs text-gray-400">Aparece en el comprobante o email de tu banco</p>
       </div>
 
       <div className="flex gap-3">
