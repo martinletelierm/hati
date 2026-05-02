@@ -6,7 +6,15 @@ export const dynamic = 'force-dynamic'
 const PRICE_PER_UNIT = 27990
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+  let body: any
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido' }, { status: 400 })
+  }
+
+  console.log('[presale] body recibido:', JSON.stringify(body))
+
   const {
     tipoPago, cantidad = 1,
     numeroPedido, comprobanteUrl, numeroBoleta,
@@ -14,8 +22,18 @@ export async function POST(request: NextRequest) {
     direccion, departamento, comuna, ciudad, region,
   } = body
 
-  if (!nombre || !email || !rut || !direccion || !tipoPago) {
-    return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
+  const missing: string[] = []
+  if (!tipoPago)   missing.push('tipoPago')
+  if (!nombre)     missing.push('nombre')
+  if (!email)      missing.push('email')
+  if (!telefono)   missing.push('telefono')
+  if (!rut)        missing.push('rut')
+  if (!direccion)  missing.push('direccion')
+  if (!comuna)     missing.push('comuna')
+  if (!region)     missing.push('region')
+
+  if (missing.length) {
+    return NextResponse.json({ error: `Faltan campos: ${missing.join(', ')}` }, { status: 400 })
   }
 
   const { error } = await getSupabase().from('preorders').insert({

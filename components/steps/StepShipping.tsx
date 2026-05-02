@@ -37,7 +37,13 @@ export default function StepShipping({
     e.preventDefault()
     if (!validate()) return
     setLoading(true)
-    try { await onSubmit() } catch { alert('Error al enviar. Intenta nuevamente.') }
+    try {
+      await onSubmit()
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error desconocido'
+      console.error('Submit error:', err)
+      alert(`Error al enviar: ${msg}`)
+    }
     setLoading(false)
   }
 

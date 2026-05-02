@@ -67,7 +67,10 @@ export default function PreSaleWizard() {
         comuna: data.comuna, ciudad: data.ciudad, region: data.region,
       }),
     })
-    if (!res.ok) throw new Error('Error')
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Error desconocido' }))
+      throw new Error(err.error || `HTTP ${res.status}`)
+    }
     setSubmitted(true)
   }
 
