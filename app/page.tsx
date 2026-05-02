@@ -1,4 +1,5 @@
 import PreSaleWizard from '@/components/PreSaleWizard'
+import PreventaHomeStatus from '@/components/PreventaHomeStatus'
 import GameImage from '@/components/GameImage'
 
 export default function Home() {
@@ -22,6 +23,11 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
+      </div>
+
+      {/* Cupo preventa (vivo desde API) */}
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-5 sm:pt-6">
+        <PreventaHomeStatus />
       </div>
 
       {/* WIZARD */}
