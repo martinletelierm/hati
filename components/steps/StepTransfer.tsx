@@ -4,25 +4,15 @@ import { useState } from 'react'
 import type { WizardData } from '../PreSaleWizard'
 import { PREVENTA_1_CLP, PREVENTA_2_CLP } from '@/lib/pricing'
 
-const BANK = {
-  beneficiario: 'Editorial SJS',
-  rut:          '76.996.471-1',
-  banco:        'Banco Estado',
-  tipoCuenta:   'Cuenta Vista / Chequera Electrónica',
-  numeroCuenta: '34371448367',
-  email:        'ventas@editorialsjs.com',
-  asunto:       'HATI',
-}
+/** Bloque tal como debe verse / copiarse en la app del banco */
+const TRANSFER_LINES = [
+  'Editorial SJS',
+  'Rut: 76.996.471-1',
+  'Cuenta Vista/ Chequera Electrónica Banco Estado',
+  'Nº 34371448367',
+] as const
 
-const COPY_BLOCK = [
-  BANK.beneficiario,
-  BANK.rut,
-  BANK.banco,
-  BANK.tipoCuenta,
-  BANK.numeroCuenta,
-  BANK.email,
-  BANK.asunto,
-].join('\n')
+const COPY_BLOCK = TRANSFER_LINES.join('\n')
 
 function copy(text: string) {
   try { navigator.clipboard.writeText(text) } catch {
@@ -78,14 +68,17 @@ export default function StepTransfer({
           </span>
           <CopyAllBtn text={allData} />
         </div>
-        <div className="divide-y divide-gray-50">
-          <BankRow label="Beneficiario" value={BANK.beneficiario} />
-          <BankRow label="RUT"          value={BANK.rut} />
-          <BankRow label="Banco"        value={BANK.banco} />
-          <BankRow label="Tipo"        value={BANK.tipoCuenta} />
-          <BankRow label="Nº cuenta"   value={BANK.numeroCuenta} mono />
-          <BankRow label="Correo"      value={BANK.email} />
-          <BankRow label="Asunto"      value={BANK.asunto} />
+        <div className="px-5 py-5 space-y-2.5">
+          {TRANSFER_LINES.map((line, i) => (
+            <p
+              key={i}
+              className={`text-sm font-medium text-forest leading-snug ${
+                line.startsWith('Nº ') ? 'font-mono tracking-wide' : ''
+              }`}
+            >
+              {line}
+            </p>
+          ))}
         </div>
       </div>
 
@@ -150,13 +143,3 @@ function CopyAllBtn({ text }: { text: string }) {
   )
 }
 
-function BankRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 px-4 sm:px-5 py-3.5">
-      <span className="text-sm text-gray-400 sm:min-w-[7.5rem] shrink-0">{label}</span>
-      <span className={`text-sm font-medium text-forest sm:text-right break-all ${mono ? 'font-mono' : ''}`}>
-        {value}
-      </span>
-    </div>
-  )
-}
