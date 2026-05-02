@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { WizardData } from '../PreSaleWizard'
-import AddressAutocomplete from '../AddressAutocomplete'
+import { REGIONES } from '@/lib/chile'
 
 export default function StepShipping({
   data, update, onSubmit, onBack,
@@ -15,14 +15,20 @@ export default function StepShipping({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
 
+  const comunas = useMemo(
+    () => REGIONES.find(r => r.nombre === data.region)?.comunas ?? [],
+    [data.region]
+  )
+
   const validate = () => {
     const e: Record<string, string> = {}
     if (data.nombre.trim().length < 2)              e.nombre    = 'Ingresa tu nombre'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Email inválido'
     if (data.telefono.replace(/\D/g, '').length < 8) e.telefono = 'Teléfono inválido'
     if (data.rut.trim().length < 5)                 e.rut       = 'RUT inválido'
-    if (data.direccion.trim().length < 5)            e.direccion = 'Selecciona una dirección válida'
-    if (!data.region)                                e.region    = 'Completa la dirección para auto-detectar la región'
+    if (data.direccion.trim().length < 5)            e.direccion = 'Ingresa tu dirección'
+    if (!data.region)                                e.region    = 'Selecciona una región'
+    if (!data.comuna)                                e.comuna    = 'Selecciona una comuna'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -45,7 +51,7 @@ export default function StepShipping({
         <p className="text-gray-400 mt-1 text-sm">Te contactamos por WhatsApp para coordinar</p>
       </div>
 
-      {/* Personal */}
+      {/* Datos personales */}
       <div className="space-y-3">
         <Field label="Nombre completo" error={errors.nombre}>
           <input
@@ -88,37 +94,54 @@ export default function StepShipping({
         </Field>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-gray-100 pt-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">Dirección de envío</p>
+      {/* Dirección */}
+      <div className="border-t border-gray-100 pt-5 space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Dirección de envío</p>
 
-        <div className="space-y-3">
-          <Field label="Dirección" error={errors.direccion}>
-            <AddressAutocomplete
-              value={data.direccion}
-              onChange={({ direccion, comuna, ciudad, region }) =>
-                update({ direccion, comuna, ciudad, region })
-              }
-              error={errors.direccion}
-            />
-          </Field>
+        <Field label="Región" error={errors.region}>
+          <select
+            value={data.region}
+            onChange={e => update({ region: e.target.value, comuna: '', ciudad: '' })}
+            className={cls(errors.region)}
+          >
+            <option value="">Selecciona tu región</option>
+            {REGIONES.map(r => (
+              <option key={r.nombre} value={r.nombre}>{r.nombre}</option>
+            ))}
+          </select>
+        </Field>
 
-          <Field label="Depto / Casa / Oficina" hint="Opcional">
-            <input
-              value={data.departamento}
-              onChange={e => update({ departamento: e.target.value })}
-              placeholder="Ej: Depto 301, Casa B, Of. 5"
-              className={cls()}
-            />
-          </Field>
+        <Field label="Comuna" error={errors.comuna}>
+          <select
+            value={data.comuna}
+            onChange={e => update({ comuna: e.target.value })}
+            disabled={!data.region}
+            className={cls(errors.comuna) + (!data.region ? ' opacity-40 cursor-not-allowed' : '')}
+          >
+            <option value="">{data.region ? 'Selecciona tu comuna' : 'Primero elige la región'}</option>
+            {comunas.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </Field>
 
-          {/* Auto-filled fields */}
-          <div className="grid grid-cols-3 gap-3">
-            <AutoField label="Comuna" value={data.comuna} />
-            <AutoField label="Ciudad" value={data.ciudad} />
-            <AutoField label="Región" value={data.region} error={errors.region} />
-          </div>
-        </div>
+        <Field label="Dirección" error={errors.direccion}>
+          <input
+            value={data.direccion}
+            onChange={e => update({ direccion: e.target.value })}
+            placeholder="Calle y número  —  Ej: Av. Providencia 1234"
+            className={cls(errors.direccion)}
+          />
+        </Field>
+
+        <Field label="Depto / Casa / Block" hint="Opcional">
+          <input
+            value={data.departamento}
+            onChange={e => update({ departamento: e.target.value })}
+            placeholder="Ej: Depto 301, Casa B, Block 4"
+            className={cls()}
+          />
+        </Field>
       </div>
 
       <p className="text-xs text-gray-400 text-center">
@@ -146,8 +169,8 @@ export default function StepShipping({
 }
 
 const cls = (err?: string) =>
-  `w-full py-4 px-5 rounded-2xl border-2 outline-none transition-colors text-base ${
-    err ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-forest bg-white'
+  `w-full py-4 px-5 rounded-2xl border-2 outline-none transition-colors text-base bg-white ${
+    err ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-forest'
   }`
 
 function Field({
@@ -160,22 +183,6 @@ function Field({
         {hint && <span className="text-xs text-gray-300">{hint}</span>}
       </div>
       {children}
-      {error && <p className="text-red-500 text-xs">{error}</p>}
-    </div>
-  )
-}
-
-function AutoField({ label, value, error }: { label: string; value: string; error?: string }) {
-  return (
-    <div>
-      <p className="text-xs text-gray-400 mb-1.5">{label}</p>
-      <div className={`py-3 px-4 rounded-xl border text-sm min-h-[48px] ${
-        value
-          ? 'border-gray-200 bg-gray-50 text-forest font-medium'
-          : 'border-dashed border-gray-200 text-gray-300'
-      }`}>
-        {value || 'Auto'}
-      </div>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   )
