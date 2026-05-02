@@ -1,10 +1,11 @@
 import PreSaleWizard from '@/components/PreSaleWizard'
+import GameImage from '@/components/GameImage'
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-cream">
 
-      {/* HEADER MINIMAL */}
+      {/* HEADER */}
       <header className="bg-forest text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: "url('/images/components.jpg')" }} />
         <div className="absolute inset-0 bg-gradient-to-b from-forest/80 via-forest/60 to-forest" />
@@ -21,7 +22,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Wave separator */}
         <svg className="block w-full -mb-1" viewBox="0 0 1200 60" preserveAspectRatio="none">
           <path d="M0,60 L0,30 Q300,0 600,30 T1200,30 L1200,60 Z" fill="#F8F4EE" />
         </svg>
@@ -45,20 +45,22 @@ export default function Home() {
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            <div className="col-span-2 row-span-2 aspect-square">
-              <img src="/images/full.jpg" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
+            <div className="col-span-2 aspect-square">
+              <GameImage src="/images/full.jpg" alt="HATI completo" className="w-full h-full object-cover rounded-2xl" />
             </div>
-            <div className="aspect-square">
-              <img src="/images/box.jpg" alt="Caja" className="w-full h-full object-cover rounded-2xl" />
+            <div className="flex flex-col gap-3">
+              <div className="flex-1">
+                <GameImage src="/images/box.jpg" alt="Caja HATI" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
+              </div>
+              <div className="flex-1">
+                <GameImage src="/images/tower.jpg" alt="Torre" className="w-full h-full object-cover rounded-2xl" style={{ minHeight: '100px' }} />
+              </div>
             </div>
-            <div className="aspect-square">
-              <img src="/images/tower.jpg" alt="Torre" className="w-full h-full object-cover rounded-2xl" />
+            <div className="aspect-[4/3]">
+              <GameImage src="/images/action.jpg" alt="En acción" className="w-full h-full object-cover rounded-2xl" />
             </div>
-            <div className="aspect-square">
-              <img src="/images/action.jpg" alt="En acción" className="w-full h-full object-cover rounded-2xl" />
-            </div>
-            <div className="aspect-square">
-              <img src="/images/components.jpg" alt="Componentes" className="w-full h-full object-cover rounded-2xl" />
+            <div className="col-span-2 aspect-[16/7]">
+              <GameImage src="/images/components.jpg" alt="Componentes" className="w-full h-full object-cover rounded-2xl" />
             </div>
           </div>
 
