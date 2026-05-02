@@ -7,8 +7,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#2D5A4D',
-        accent: '#FF6B35',
+        forest: '#1C3D35',
+        'forest-mid': '#2D5A4D',
+        'forest-light': '#3D7A6A',
+        cream: '#F8F4EE',
+        orange: '#E8632A',
+      },
+      fontFamily: {
+        display: ['Georgia', 'serif'],
       },
     },
   },
