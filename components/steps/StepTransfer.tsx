@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import type { WizardData } from '../PreSaleWizard'
-
-const PRICE = 27990
+import { PREVENTA_1_CLP, PREVENTA_2_CLP } from '@/lib/pricing'
 
 const BANK = {
   beneficiario: 'Editorial SJS',
@@ -34,9 +33,12 @@ function copy(text: string) {
 }
 
 export default function StepTransfer({
-  data, update, onNext, onBack,
+  data, onNext, onBack,
 }: { data: WizardData; update: (p: Partial<WizardData>) => void; onNext: () => void; onBack: () => void }) {
-  const total = data.cantidad * PRICE
+  const total =
+    data.precioTotal > 0
+      ? data.precioTotal
+      : data.cantidad * PREVENTA_1_CLP
   const allData = COPY_BLOCK
 
   return (
@@ -48,6 +50,22 @@ export default function StepTransfer({
         </h2>
         <p className="text-gray-400 mt-1 text-sm">Usa tu app de banco con los datos de abajo</p>
       </div>
+
+      {(data.unidadesPreventa1 > 0 || data.unidadesPreventa2 > 0) && (
+        <p className="text-sm text-gray-600 bg-gray-50 rounded-xl px-4 py-3 text-left leading-relaxed">
+          {data.unidadesPreventa1 > 0 && (
+            <span>
+              {data.unidadesPreventa1} juego{data.unidadesPreventa1 !== 1 ? 's' : ''} a Pre Venta 1 (${PREVENTA_1_CLP.toLocaleString('es-CL')})
+              {data.unidadesPreventa2 > 0 ? ' · ' : ''}
+            </span>
+          )}
+          {data.unidadesPreventa2 > 0 && (
+            <span>
+              {data.unidadesPreventa2} juego{data.unidadesPreventa2 !== 1 ? 's' : ''} a Pre Venta 2 (${PREVENTA_2_CLP.toLocaleString('es-CL')})
+            </span>
+          )}
+        </p>
+      )}
 
       {/* Total */}
       <TotalCard total={total} cantidad={data.cantidad} />

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import type { WizardData } from '../PreSaleWizard'
-
-const PRICE = 27990
+import { PREVENTA_1_CLP } from '@/lib/pricing'
 
 const TIPO_LABEL: Record<string, string> = {
   transferencia: 'Transferencia bancaria',
@@ -14,7 +13,10 @@ export default function StepConfirmation({ data }: { data: WizardData }) {
   const [pdfLoading, setPdfLoading] = useState(false)
   const [pdfError, setPdfError] = useState('')
 
-  const total = data.cantidad * PRICE
+  const total =
+    data.precioTotal > 0
+      ? data.precioTotal
+      : data.cantidad * PREVENTA_1_CLP
   const direccionCompleta = [data.direccion, data.departamento, data.comuna, data.region]
     .filter(Boolean).join(', ')
 
@@ -44,6 +46,9 @@ export default function StepConfirmation({ data }: { data: WizardData }) {
           region: data.region,
           cantidad: data.cantidad,
           comprobanteUrl: data.comprobanteUrl || null,
+          precioTotal: data.precioTotal,
+          unidadesPreventa1: data.unidadesPreventa1,
+          unidadesPreventa2: data.unidadesPreventa2,
         }),
       })
       if (!res.ok) {
@@ -91,6 +96,16 @@ export default function StepConfirmation({ data }: { data: WizardData }) {
         <Row label="Comprobante" value={refComprobante} mono />
         <Row label="Nombre"      value={data.nombre} />
         <Row label="Cantidad"    value={`${data.cantidad} juego${data.cantidad > 1 ? 's' : ''}`} />
+        {(data.unidadesPreventa1 > 0 || data.unidadesPreventa2 > 0) && (
+          <Row
+            label="Preventa"
+            value={
+              data.unidadesPreventa2 > 0
+                ? `${data.unidadesPreventa1} a Pre Venta 1 · ${data.unidadesPreventa2} a Pre Venta 2`
+                : `${data.unidadesPreventa1} a Pre Venta 1`
+            }
+          />
+        )}
         <Row label="Tipo de pago" value={tipoLabel} />
         <Row label="Total"       value={`$${total.toLocaleString('es-CL')}`} bold />
         <Row label="Envío a"     value={direccionCompleta} />

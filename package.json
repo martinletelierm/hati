@@ -13,6 +13,8 @@
     "@hookform/resolvers": "^3.3.0",
     "@supabase/supabase-js": "^2.45.0",
     "axios": "^1.6.0",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "next": "^14.0.0",
     "pdf-lib": "^1.17.1",
     "react": "^18.2.0",

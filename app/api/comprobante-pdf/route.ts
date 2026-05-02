@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib'
+import { PREVENTA_1_CLP, PREVENTA_2_CLP } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
-
-const PRICE_PER_UNIT = 27990
 
 const TIPO_LABEL: Record<string, string> = {
   transferencia: 'Transferencia bancaria',
@@ -56,7 +55,13 @@ export async function POST(request: NextRequest) {
   const region = clampStr(body.region, 120)
   const comprobanteUrlRaw = body.comprobanteUrl
 
-  const precioTotal = cantidad * PRICE_PER_UNIT
+  const precioTotalRaw = Number(body.precioTotal)
+  const u1 = Number(body.unidadesPreventa1)
+  const u2 = Number(body.unidadesPreventa2)
+  const precioTotal =
+    Number.isFinite(precioTotalRaw) && precioTotalRaw > 0
+      ? precioTotalRaw
+      : cantidad * PREVENTA_1_CLP
   const refComprobante = numeroPedido || numeroBoleta || '—'
   const tipoLabel = (tipoPago && TIPO_LABEL[tipoPago]) || tipoPago || '—'
 
@@ -102,6 +107,18 @@ export async function POST(request: NextRequest) {
   draw('Datos del pedido', 13, true)
   draw(`Referencia / N° comprobante: ${refComprobante}`, 11)
   draw(`Cantidad: ${cantidad} juego${cantidad > 1 ? 's' : ''}`, 11)
+  if (Number.isFinite(u1) && u1 > 0) {
+    draw(
+      `Pre Venta 1: ${u1} × $${PREVENTA_1_CLP.toLocaleString('es-CL')} = $${(u1 * PREVENTA_1_CLP).toLocaleString('es-CL')}`,
+      11,
+    )
+  }
+  if (Number.isFinite(u2) && u2 > 0) {
+    draw(
+      `Pre Venta 2: ${u2} × $${PREVENTA_2_CLP.toLocaleString('es-CL')} = $${(u2 * PREVENTA_2_CLP).toLocaleString('es-CL')}`,
+      11,
+    )
+  }
   draw(`Tipo de pago: ${tipoLabel}`, 11)
   if (numeroBoleta && tipoPago === 'maquina') {
     draw(`N° boleta o voucher: ${numeroBoleta}`, 11)

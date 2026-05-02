@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import StepCantidad from './steps/StepCantidad'
 import StepPaymentType from './steps/StepPaymentType'
 import StepTransfer from './steps/StepTransfer'
@@ -14,6 +14,12 @@ export type PaymentType = 'transferencia' | 'maquina'
 export type WizardData = {
   tipoPago: PaymentType | ''
   cantidad: number
+  /** Precio total calculado en servidor (Pre Venta 1 / 2). */
+  precioTotal: number
+  unidadesPreventa1: number
+  unidadesPreventa2: number
+  vendidasHoyPv1: number
+  restantesPv1Hoy: number
   // Transferencia
   comprobanteFile: File | null
   comprobanteUrl: string
@@ -36,6 +42,11 @@ export default function PreSaleWizard() {
   const [step, setStep] = useState(0)
   const [data, setData] = useState<WizardData>({
     tipoPago: '', cantidad: 1,
+    precioTotal: 0,
+    unidadesPreventa1: 0,
+    unidadesPreventa2: 0,
+    vendidasHoyPv1: 0,
+    restantesPv1Hoy: 20,
     comprobanteFile: null, comprobanteUrl: '', numeroPedido: '',
     numeroBoleta: '',
     nombre: '', email: '', telefono: '', rut: '',
@@ -43,7 +54,9 @@ export default function PreSaleWizard() {
   })
   const [submitted, setSubmitted] = useState(false)
 
-  const update = (p: Partial<WizardData>) => setData(d => ({ ...d, ...p }))
+  const update = useCallback((p: Partial<WizardData>) => {
+    setData(d => ({ ...d, ...p }))
+  }, [])
   const next = () => setStep(s => s + 1)
   const back = () => setStep(s => s - 1)
 
@@ -71,6 +84,16 @@ export default function PreSaleWizard() {
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'Error desconocido' }))
       throw new Error(err.error || `HTTP ${res.status}`)
+    }
+    const json = await res.json().catch(() => ({})) as {
+      pedido?: { precioTotal: number; unidadesPreventa1: number; unidadesPreventa2: number }
+    }
+    if (json.pedido) {
+      update({
+        precioTotal: json.pedido.precioTotal,
+        unidadesPreventa1: json.pedido.unidadesPreventa1,
+        unidadesPreventa2: json.pedido.unidadesPreventa2,
+      })
     }
     setSubmitted(true)
   }
