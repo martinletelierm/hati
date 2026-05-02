@@ -23,8 +23,8 @@ function copy(text: string) {
 }
 
 export default function StepTransfer({
-  data, update, onNext,
-}: { data: WizardData; update: (p: Partial<WizardData>) => void; onNext: () => void }) {
+  data, update, onNext, onBack,
+}: { data: WizardData; update: (p: Partial<WizardData>) => void; onNext: () => void; onBack: () => void }) {
   const total = data.cantidad * PRICE
   const allData = Object.values(BANK).join('\n')
 
@@ -82,12 +82,19 @@ export default function StepTransfer({
         Escribe <strong>HATI</strong> en el comentario y guarda el número de operación.
       </div>
 
-      <button
-        onClick={onNext}
-        className="w-full bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
-      >
-        Ya transferí →
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={onBack}
+          className="px-5 py-4 rounded-2xl border border-gray-200 text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors"
+        >←</button>
+        <button
+          onClick={onNext}
+          className="flex-1 bg-forest text-white font-semibold py-4 rounded-2xl text-base hover:bg-forest-mid transition-colors"
+        >
+          Ya transferí →
+        </button>
+      </div>
     </div>
   )
 }
